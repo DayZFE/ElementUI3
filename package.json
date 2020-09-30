@@ -1,14 +1,29 @@
 {
   "name": "elementui3",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ElementUI/theme-chalk.git"
+  },
+  "main": "./dist/element.umd.min.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "element",
+    "theme"
+  ],
+  "author": "DayZFE",
+  "license": "MIT",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit"
+    "build": "vue-cli-service build --target lib --name element ./lib/index.ts",
+    "test:unit": "vue-cli-service test:unit",
+    "build-description": "vue-cli-service build"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "elementui3": "^0.1.1",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0"
   },

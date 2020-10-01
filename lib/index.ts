@@ -1,3 +1,4 @@
-const a: string = "init";
-
-export default a;
+export interface Test {
+  test: string;
+}
+export const a: Test = { test: "init" };

@@ -1,6 +1,6 @@
 {
   "name": "elementui3",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ElementUI/theme-chalk.git"
@@ -13,6 +13,7 @@
     "element",
     "theme"
   ],
+  "types": "./dist/element.d.ts",
   "author": "DayZFE",
   "license": "MIT",
   "scripts": {
@@ -23,7 +24,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "elementui3": "^0.1.2",
+    "elementui3": "^0.1.3",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0"
   },

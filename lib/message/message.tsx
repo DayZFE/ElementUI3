@@ -1,5 +1,5 @@
 import { coerceCssPixelValue } from '../cdk/coercion';
-import { computed, defineComponent, onMounted, onUnmounted, ref, renderSlot, watch, watchEffect } from "vue";
+import { defineComponent, onMounted, onUnmounted, ref, renderSlot, } from "vue";
 import '../theme-chalk/src/message.scss';
 
 class Timer {
@@ -67,12 +67,6 @@ export const Message = defineComponent({
       }, 200);
     }, props.duration);
 
-    // watch(visible, (value) => {
-    //   if (!visible) {
-    //     props.onDestroy?.(props.id);
-    //   }
-    // })
-
     onMounted(() => {
       timer.start();
     });
@@ -95,16 +89,14 @@ export const Message = defineComponent({
       if (props.showClose) {
         closeIcon = <i class="el-message__closeBtn el-icon-close" onClick={close}></i>
       }
-      
+
       return (
-        // <Transition>
-          <div class={wrapperClass} style={{top: coerceCssPixelValue(props.top || 20)}} onMouseenter={() => timer.end()} onMouseleave={() => timer.start()}>
-            {icon}
-            <p class="el-message__content">{props.content}</p>
-            {renderSlot(ctx.slots, 'default')}
-            {closeIcon}
-          </div>
-        // </Transition>
+        <div class={wrapperClass} style={{ top: coerceCssPixelValue(props.top || 20) }} onMouseenter={() => timer.end()} onMouseleave={() => timer.start()}>
+          {icon}
+          <p class="el-message__content">{props.content}</p>
+          {renderSlot(ctx.slots, 'default')}
+          {closeIcon}
+        </div>
       );
     };
   }

@@ -1,12 +1,23 @@
-import { defineComponent } from "vue";
-import { RouterView } from "vue-router";
+import { defineComponent, inject } from "vue";
+import { $message, EleUIProvider } from '../lib';
+
+
+const App = () => {
+  const message = inject($message)!;
+  return (
+    <div>
+      <button onClick={() => message.info('hello')}>click me</button>
+    </div>
+  );
+}
+
 export default defineComponent({
   name: "element-app",
   setup() {
     return () => (
-      <div>
-        <RouterView />
-      </div>
+      <EleUIProvider>
+        <App />
+      </EleUIProvider>
     );
   },
 });

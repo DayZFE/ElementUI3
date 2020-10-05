@@ -1,4 +1,10 @@
-export interface Test {
-  test: string;
+import { App } from 'vue';
+
+export * from './ele-ui-provider';
+import Cdk from './cdk';
+
+export default {
+  install(app: App, ...options: any[]) {
+    Cdk.install(app, ...options);
+  }
 }
-export const a: Test = { test: "init" };

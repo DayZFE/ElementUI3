@@ -23,8 +23,10 @@
     "build-description": "vue-cli-service build"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.161",
     "core-js": "^3.6.5",
     "elementui3": "^0.1.4",
+    "lodash": "^4.17.20",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0"
   },
@@ -38,7 +40,7 @@
     "@vue/compiler-sfc": "^3.0.0-0",
     "@vue/test-utils": "^2.0.0-0",
     "declaration-bundler-webpack-plugin": "^1.0.3",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0"

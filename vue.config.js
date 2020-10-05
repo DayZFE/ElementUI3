@@ -2,7 +2,7 @@ const DeclarationBundlerPlugin = require("declaration-bundler-webpack-plugin");
 module.exports = {
   configureWebpack: {
     entry: {
-      app: "./lib/index.ts",
+      app: "./src/main.ts",
     },
     plugins: [
       new DeclarationBundlerPlugin({

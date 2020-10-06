@@ -8,7 +8,11 @@ const App = defineComponent({
     const message = inject($message)!;
     return () => (
       <div>
-        <Alert v-slots={{ title: () => "sdfsdfdsf" }} showIcon={true}>
+        <Alert
+          v-slots={{ title: () => "sdfsdfdsf" }}
+          showIcon={true}
+          type='error'
+        >
           this is test
         </Alert>
         <button onClick={() => message.info("hello")}>click me</button>

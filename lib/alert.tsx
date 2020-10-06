@@ -40,7 +40,6 @@ export default defineComponent({
     const visible = ref(true);
     const close = () => {
       visible.value = false;
-      console.log(visible);
     };
     const typeClass = computed(() => `el-alert--${props.type}`);
     const iconClass = computed(

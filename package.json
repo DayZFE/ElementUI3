@@ -27,7 +27,7 @@
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",
-    "vue": "^3.0.0-0"
+    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",

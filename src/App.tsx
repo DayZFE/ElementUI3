@@ -1,15 +1,33 @@
 import { defineComponent, inject } from "vue";
-import { $message, EleUIProvider } from '../lib';
+import { $message, EleUIProvider } from "../lib";
+import { Alert } from "../lib";
 
-
-const App = () => {
-  const message = inject($message)!;
-  return (
-    <div>
-      <button onClick={() => message.info('hello')}>click me</button>
-    </div>
-  );
-}
+const App = defineComponent({
+  name: "el-app",
+  setup() {
+    const message = inject($message)!;
+    return () => (
+      <div>
+        <Alert
+          v-slots={{ title: () => "sdfsdfdsf" }}
+          showIcon={true}
+          type='error'
+          {...{
+            on: {
+              close: () => {
+                console.log(123123);
+                console.log("closed");
+              },
+            },
+          }}
+        >
+          this is test
+        </Alert>
+        <button onClick={() => message.info("hello")}>click me</button>
+      </div>
+    );
+  },
+});
 
 export default defineComponent({
   name: "element-app",

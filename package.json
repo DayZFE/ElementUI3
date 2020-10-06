@@ -26,10 +26,8 @@
     "@types/lodash": "^4.14.161",
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
-    "elementui3": "^0.1.4",
     "lodash": "^4.17.20",
-    "vue": "^3.0.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue": "^3.0.0-0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",

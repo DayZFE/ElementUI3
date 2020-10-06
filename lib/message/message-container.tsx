@@ -1,12 +1,12 @@
 import { defineComponent, inject, Ref, renderSlot, VNode, watch } from "vue";
-import { OverlayService, overlayToken } from "../cdk";
+import { OverlayService, overlayKey } from "../cdk";
 import { Message } from './message';
 import { MessageData } from "./types";
 import '../theme-chalk/src/message.scss';
 
 export const MessageContainerFactory = (datas: Ref<Required<MessageData>[]>, destroy: (id: string) => void) => defineComponent({
   setup(ctx) {
-    const service = inject<OverlayService>(overlayToken)!;
+    const service = inject<OverlayService>(overlayKey)!;
     const strategy = service.createPositionStrategy('global');
     const overlay = service.create({
       strategy,

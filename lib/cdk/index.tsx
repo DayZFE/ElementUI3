@@ -11,11 +11,9 @@ import { collectionsPlugin } from './collections';
 // *cdx.xxx Cdk.XXX
 export default {
   install(app: any, ...options: any[]) {
-    console.log(options);
-    overlayPlugin.install(app, options[0]);
+    overlayPlugin.install(app);
     collectionsPlugin.install(app, ...options);
-  },
-  // Test,
+  }
 };
 
 // import {xxx,xxx} from 'cdk'

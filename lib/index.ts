@@ -1,7 +1,7 @@
 import { App } from 'vue';
+import Cdk from './cdk';
 
 export * from './ele-ui-provider';
-import Cdk from './cdk';
 
 export default {
   install(app: App, ...options: any[]) {

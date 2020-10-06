@@ -1,4 +1,4 @@
-import { DefineComponent, ref } from "vue";
+import { DefineComponent, InjectionKey, provide, ref } from "vue";
 import { MessageContainerFactory } from "./message-container";
 import { MessageData, MessageDataOptions } from './types';
 
@@ -31,9 +31,10 @@ export class MessageServiceImpl extends MessageService {
   private instances = ref<Required<MessageData>[]>([]);
   readonly container: DefineComponent;
 
-  constructor() {
+  constructor(key: InjectionKey<MessageService>) {
     super();
     this.container = this.render();
+    provide(key, this);
   }
 
   protected create(data: MessageData) {

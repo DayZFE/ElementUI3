@@ -7,19 +7,10 @@ export * from './overlay_props';
 export * from './overlay_service';
 export * from './overlay_state';
 
-export const overlayToken = getClassToken(OverlayService);
+export const overlayKey = getClassToken(OverlayService);
 
 export const overlayPlugin = {
-  install(app: App, document: Document) {
-    console.log(document);
-    // only once
-    let div = document.getElementById('vue-cdk-overlay');
-    if (!div) {
-      div = document.createElement('div');
-      div.id = 'vue-cdk-overlay';
-      div.className = 'vue-cdk-overlay-container';
-      document.body.append(div);
-    }
-    app.provide(overlayToken, new OverlayService(div, document.body));
+  install(app: App) {
+    app.provide(overlayKey, new OverlayService(document));
   }
 }

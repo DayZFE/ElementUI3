@@ -12,6 +12,14 @@ const App = defineComponent({
           v-slots={{ title: () => "sdfsdfdsf" }}
           showIcon={true}
           type='error'
+          {...{
+            on: {
+              close: () => {
+                console.log(123123);
+                console.log("closed");
+              },
+            },
+          }}
         >
           this is test
         </Alert>

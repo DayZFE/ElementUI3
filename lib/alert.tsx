@@ -35,12 +35,17 @@ export default defineComponent({
       type: String,
       default: "light",
     },
+    onClose: Function,
   },
+  emits: ["close"],
   setup(props, ctx) {
     const visible = ref(true);
     const close = () => {
       visible.value = false;
+      ctx.emit("close");
+      console.log(132);
     };
+    console.log(ctx);
     const typeClass = computed(() => `el-alert--${props.type}`);
     const iconClass = computed(
       () => (TYPE_CLASSES_MAP as any)[props.type] || "el-icon-info"

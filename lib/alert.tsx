@@ -1,11 +1,5 @@
 import { computed, defineComponent, ref, renderSlot, Transition } from "vue";
 
-export const TYPE_CLASSES_MAP = {
-  success: "el-icon-success",
-  warning: "el-icon-warning",
-  error: "el-icon-error",
-};
-
 export default defineComponent({
   name: "ele-alert",
   props: {
@@ -18,7 +12,7 @@ export default defineComponent({
       default: "",
     },
     type: {
-      type: String,
+      type: String as () => "info" | "success" | "warning" | "error",
       default: "info",
     },
     closable: {
@@ -32,24 +26,20 @@ export default defineComponent({
     showIcon: Boolean,
     center: Boolean,
     effect: {
-      type: String,
+      type: String as () => "light" | "dark",
       default: "light",
     },
-    onClose: Function,
+    onClose: {
+      type: Function,
+      default: () => {},
+    },
   },
-  emits: ["close"],
   setup(props, ctx) {
     const visible = ref(true);
     const close = () => {
       visible.value = false;
-      ctx.emit("close");
-      console.log(132);
+      props.onClose();
     };
-    console.log(ctx);
-    const typeClass = computed(() => `el-alert--${props.type}`);
-    const iconClass = computed(
-      () => (TYPE_CLASSES_MAP as any)[props.type] || "el-icon-info"
-    );
     const isBigIcon = computed(() =>
       props.description || ctx.slots["default"]?.() ? "is-big" : ""
     );
@@ -62,7 +52,7 @@ export default defineComponent({
         <div
           class={[
             "el-alert",
-            typeClass.value,
+            "el-alert--" + props.type,
             props.center ? "is-center" : "",
             "is-" + props.effect,
           ]}
@@ -70,7 +60,13 @@ export default defineComponent({
           role='alert'
         >
           {props.showIcon ? (
-            <i class={["el-alert__icon", iconClass.value, isBigIcon.value]}></i>
+            <i
+              class={[
+                "el-alert__icon",
+                "el-icon-" + props.type,
+                isBigIcon.value,
+              ]}
+            ></i>
           ) : null}
 
           <div class='el-alert__content'>

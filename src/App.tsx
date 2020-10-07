@@ -1,6 +1,6 @@
 import { defineComponent, inject } from "vue";
 import { $message, EleUIProvider } from "../lib";
-import { Alert } from "../lib";
+import { Alert, Avatar } from "../lib";
 
 const App = defineComponent({
   name: "el-app",
@@ -12,17 +12,24 @@ const App = defineComponent({
           v-slots={{ title: () => "sdfsdfdsf" }}
           showIcon={true}
           type='error'
-          {...{
-            on: {
-              close: () => {
-                console.log(123123);
-                console.log("closed");
-              },
-            },
+          onClose={() => {
+            console.log("closed");
           }}
         >
           this is test
         </Alert>
+        <Avatar
+          size='large'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
+        <Avatar
+          size='medium'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
+        <Avatar
+          size='small'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
         <button onClick={() => message.info("hello")}>click me</button>
       </div>
     );

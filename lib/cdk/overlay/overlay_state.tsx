@@ -21,6 +21,8 @@ export class OverlayState {
 
   private readonly originOverflow = this.body.style.overflow;
 
+  private isMounted = false;
+
   constructor(
     private readonly config: Required<OverlayConfig>,
     private body: HTMLElement,
@@ -29,11 +31,19 @@ export class OverlayState {
   }
 
   attach(): void {
+    if (!this.isMounted) {
+      console.warn('You must invoke this method after vue mounted or "onMounted()" hook.');
+      return;
+    }
     this._setOverflow(true);
     this.show.value = true;
   }
 
   detach(): void {
+    if (!this.isMounted) {
+      console.warn('You must invoke this method after vue mounted or "onMounted()" hook.');
+      return;
+    }
     this._setOverflow(false);
     this.show.value = false;
   }
@@ -59,13 +69,14 @@ export class OverlayState {
         let originDisplay = '';
 
         onMounted(() => {
+          that.isMounted = true;
           const current = that.config.strategy.setup();
           styles.containerStyle = current.containerStyle;
           styles.positionedStyle = current.positionedStyle.value;
 
           originDisplay = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
-          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'unset' : 'none';
+          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'auto' : 'none';
 
 
           watch(current.positionedStyle, (value) => {

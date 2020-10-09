@@ -19,10 +19,10 @@ export class OverlayService {
 
   create(config: OverlayConfig) {
     return new OverlayState({
+      strategy: config.strategy,
       hasBackdrop: config.hasBackdrop ?? true,
       backdropClose: config.backdropClose ?? true,
       backdropClick: config.backdropClick ?? null,
-      strategy: config.strategy,
       backgroundClass: config.backgroundClass ?? '',
       backgroundBlock: config.backgroundBlock ?? false,
     }, this.body);

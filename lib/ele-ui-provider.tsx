@@ -1,6 +1,6 @@
 import { defineComponent, provide, renderSlot } from "vue";
 import { getClassToken } from "./cdk/tools";
-import { MessageService, MessageServiceImpl } from "./message/message-service";
+import { MessageService, MessageServiceImpl } from "./message/message.service";
 
 
 export const $message = getClassToken<MessageService>(MessageServiceImpl);

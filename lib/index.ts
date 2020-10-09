@@ -9,7 +9,7 @@ export { default as OverlayCompo } from "./cdk/OverlayCompo";
 export { default as Backtop } from "./backtop";
 export { default as Badge } from "./badge";
 export { Breadcrumb, BreadcrumbItem } from "./breadcrumb";
-export { default as Button } from "./button";
+export { default as Button, ButtonGroup } from "./button";
 export {
   default as globalInject,
   platformToken,

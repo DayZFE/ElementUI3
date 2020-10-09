@@ -12,6 +12,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
+  ButtonGroup,
 } from "../lib";
 
 const App = defineComponent({
@@ -114,7 +115,7 @@ const App = defineComponent({
             <BreadcrumbItem value='345'>test</BreadcrumbItem>
           </Breadcrumb>
         </div>
-        <div>
+        <p>
           <Button type='primary'>test</Button>
           <Button icon='el-icon-search' circle></Button>
           <Button type='primary' icon='el-icon-edit' circle></Button>
@@ -122,7 +123,18 @@ const App = defineComponent({
           <Button type='info' icon='el-icon-message' circle></Button>
           <Button type='warning' icon='el-icon-star-off' circle></Button>
           <Button type='danger' icon='el-icon-delete' circle></Button>
-        </div>
+        </p>
+        <p>
+          <ButtonGroup>
+            <Button type='primary' icon='el-icon-arrow-left'>
+              上一页
+            </Button>
+            <Button type='primary'>
+              下一页<i class='el-icon-arrow-right el-icon--right'></i>
+            </Button>
+          </ButtonGroup>
+        </p>
+
         <div style='height:200px;overflow-y:auto'>
           <div ref={divRef} style='height:1000px'></div>
         </div>

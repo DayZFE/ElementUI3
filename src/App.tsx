@@ -9,6 +9,8 @@ import {
   getRefRect,
   Backtop,
   Badge,
+  Breadcrumb,
+  BreadcrumbItem,
 } from "../lib";
 
 const App = defineComponent({
@@ -94,6 +96,17 @@ const App = defineComponent({
           src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
         ></Avatar>
         <button onClick={() => message.info("hello")}>click me</button>
+        <div>
+          <Breadcrumb
+            onSelected={(e: string) => {
+              console.log(e);
+            }}
+          >
+            <BreadcrumbItem value='123'>test</BreadcrumbItem>
+            <BreadcrumbItem value='234'>test</BreadcrumbItem>
+            <BreadcrumbItem value='345'>test</BreadcrumbItem>
+          </Breadcrumb>
+        </div>
         <div style='height:200px;overflow-y:auto'>
           <div ref={divRef} style='height:1000px'></div>
         </div>

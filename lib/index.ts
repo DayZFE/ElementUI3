@@ -8,6 +8,7 @@ export { default as Avatar } from "./avatar";
 export { default as OverlayCompo } from "./cdk/OverlayCompo";
 export { default as Backtop } from "./backtop";
 export { default as Badge } from "./badge";
+export { Breadcrumb, BreadcrumbItem } from "./breadcrumb";
 export {
   default as globalInject,
   platformToken,

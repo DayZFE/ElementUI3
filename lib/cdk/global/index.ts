@@ -4,12 +4,14 @@ import Breakpoint from "./breakpoint";
 import Bidirection from "./bidirection";
 import Platform from "./platform";
 import Clipboard from "./clipboard";
+import ViewPort from "./viewport";
 
 // provide token
 export const platformToken = getClassToken(Platform);
 export const breakpointToken = getClassToken(Breakpoint);
 export const bidirectionToken = getClassToken(Bidirection);
 export const clipboardToken = getClassToken(Clipboard);
+export const viewportToken = getClassToken(ViewPort);
 
 /**
  * all the global apis will only have single instace
@@ -25,5 +27,6 @@ export default function () {
   // ! platform first
   provide(breakpointToken, new Breakpoint());
   provide(bidirectionToken, new Bidirection());
-  provide(clipboardToken, new Clipboard());  
+  provide(clipboardToken, new Clipboard());
+  provide(viewportToken, new ViewPort());
 }

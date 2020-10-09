@@ -1,6 +1,7 @@
 import {
   defineComponent,
   inject,
+  InjectionKey,
   onMounted,
   provide,
   Ref,
@@ -9,7 +10,7 @@ import {
   Transition,
   watch,
 } from "vue";
-import { platformToken } from "../lib";
+import { platformToken, getFuncToken } from "../lib";
 import { runWhileScroll } from "./cdk/tools";
 
 /**
@@ -24,7 +25,7 @@ import { runWhileScroll } from "./cdk/tools";
  */
 export function backtopController(target?: Ref<string>) {
   const { BODY } = inject(platformToken)!;
-  if (!BODY) return () => null;
+  if (!BODY) return null;
   const container = ref<HTMLElement>(BODY);
   if (target) {
     watch(target, (res) => {
@@ -54,9 +55,6 @@ export function backtopController(target?: Ref<string>) {
     };
     rAF(frameFunc);
   };
-  onMounted(() => {
-    console.log(container);
-  });
   provide("ele-backtop", { container, visible, scrollToTop });
   return { container, visible, scrollToTop };
 }
@@ -83,11 +81,10 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    let backtop = inject("ele-backtop");
-    if (!backtop) {
-      backtop = backtopController();
-    }
-    const { container, visible, scrollToTop } = backtop as any;
+    const { container, visible, scrollToTop } = inject(
+      getFuncToken(backtopController, "ele-backtop"),
+      backtopController()
+    )!;
     runWhileScroll(() => {
       const scrollTop = container.value.scrollTop;
       visible.value = scrollTop >= props.visibilityHeight;

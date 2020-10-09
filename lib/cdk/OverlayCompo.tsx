@@ -1,6 +1,7 @@
 import {
   computed,
   defineComponent,
+  provide,
   renderSlot,
   Teleport,
   Transition,

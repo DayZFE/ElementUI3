@@ -7,6 +7,7 @@ export { default as Alert } from "./alert";
 export { default as Avatar } from "./avatar";
 export { default as OverlayCompo } from "./cdk/OverlayCompo";
 export { default as Backtop } from "./backtop";
+export { default as Badge } from "./badge";
 export {
   default as globalInject,
   platformToken,

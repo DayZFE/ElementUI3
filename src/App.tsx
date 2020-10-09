@@ -1,14 +1,14 @@
-import { defineComponent, inject, ref, watch } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import {
   Alert,
   Avatar,
   globalInject,
-  viewportToken,
   OverlayCompo,
   $message,
   EleUIProvider,
   getRefRect,
   Backtop,
+  Badge,
 } from "../lib";
 
 const App = defineComponent({
@@ -61,13 +61,16 @@ const App = defineComponent({
         >
           <div style='width:100px;height:200px;background-color:white'></div>
         </OverlayCompo>
-        <button
-          onClick={() => {
-            showModal.value = true;
-          }}
-        >
-          打开弹框
-        </button>
+
+        <Badge value='快点我'>
+          <button
+            onClick={() => {
+              showModal.value = true;
+            }}
+          >
+            打开弹框
+          </button>
+        </Badge>
         <Alert
           v-slots={{ title: () => "sdfsdfdsf" }}
           showIcon={true}

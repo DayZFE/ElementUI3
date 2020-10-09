@@ -127,11 +127,13 @@
 .el-message-move-in {
   animation-duration: 0.2s;
   animation-name: MessageMoveIn;
+  opacity: 1;
 }
 
 .el-message-move-out {
   animation-duration: 0.2s;
   animation-name: MessageMoveOut;
+  opacity: 0;
 }
 
 @keyframes MessageMoveIn {

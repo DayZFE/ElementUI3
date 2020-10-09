@@ -1,23 +1,61 @@
-import { defineComponent, inject, reactive, ref, watch } from "vue";
-import { $message, EleUIProvider, EleDialog} from '../lib';
+import { defineComponent, inject, ref } from "vue";
+import { $message, EleUIProvider, Dialog, Button } from "../lib";
+import { Alert, Avatar } from "../lib";
 
-const App = () => {
-  const message = inject($message)!;
-  const visible = ref(false);
-  
-  
-  return (
-    <div>
-      <button onClick={() => message.info('hello')}>click me</button>
+const App = defineComponent({
+  name: "el-app",
+  setup() {
+    const message = inject($message)!;
+    const visible = ref(false);
 
-      <button onClick={() => visible.value = true}>show Dialog</button>
+    return () => (
+      <div>
+        <Alert
+          v-slots={{ title: () => "sdfsdfdsf" }}
+          showIcon={true}
+          type='error'
+          onClose={() => {
+            console.log("closed");
+          }}
+        >
+          this is test
+        </Alert>
+        <Avatar
+          size='large'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
+        <Avatar
+          size='medium'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
+        <Avatar
+          size='small'
+          src='https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        ></Avatar>
+        <div>
+          <Button round onClick={() => message.info("hello")}>click me</Button>
+        </div>
+        <div>
+          <Button onClick={() => visible.value = true}>show Dialog</Button>
+        </div>
+        <div>
 
-      <EleDialog visible={visible.value}>
-        <div>test</div>
-      </EleDialog>
-    </div>
-  );
-}
+        </div>
+
+        <Dialog title="提示" width="30%" v-model={[visible.value, 'visible']} v-slots={{
+          footer: () => (
+            <span class="dialog-footer">
+              <Button onClick={() => visible.value = false}>取 消</Button>
+              <Button type="primary" onClick={() => visible.value = false}>确 定</Button>
+            </span>
+          ),
+        }}>
+          <div>测试内容</div>
+        </Dialog>
+      </div>
+    );
+  },
+});
 
 export default defineComponent({
   name: "element-app",

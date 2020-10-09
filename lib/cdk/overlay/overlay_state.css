@@ -1,4 +1,9 @@
-.overlay_container_background {
+.cdk-verlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   background: rgba(0, 0, 0, 0.4);
 }
 
@@ -10,4 +15,15 @@
   height: 100%;
   width: 100%;
   z-index: 1000;
+}
+
+.cdk-overlay-fade-enter-active,
+.cdk-overlay-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.cdk-overlay-fade-enter,
+.cdk-overlay-fade-leave,
+.cdk-overlay-fade-leave-active {
+  opacity: 0;
 }

@@ -10,12 +10,13 @@ import {
   reactive,
   CSSProperties,
   onUnmounted,
+  Transition,
 } from "vue";
 import { OverlayConfig } from '.';
 import './overlay_state.css';
 
 export class OverlayState {
-  public readonly element: DefineComponent;
+  public readonly element: DefineComponent<{ transition: string }>;
 
   private readonly show = ref(false);
 
@@ -48,10 +49,16 @@ export class OverlayState {
     this.show.value = false;
   }
 
-  render(): DefineComponent {
+  render(): DefineComponent<{ transition: string }> {
     const that = this;
     return defineComponent({
       name: 'cdk-overlay',
+      props: {
+        transition: {
+          type: String,
+          default: 'cdk-overlay-fade',
+        }
+      },
       setup(props, ctx: SetupContext) {
         const click = (event: Event) => {
           event.preventDefault();
@@ -66,21 +73,18 @@ export class OverlayState {
           containerStyle: {},
           positionedStyle: {}
         });
-        let originDisplay = '';
 
         onMounted(() => {
           that.isMounted = true;
+
           const current = that.config.strategy.setup();
           styles.containerStyle = current.containerStyle;
-          styles.positionedStyle = current.positionedStyle.value;
-
-          originDisplay = styles.containerStyle.display!;
-          styles.containerStyle.display = 'none';
           styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'auto' : 'none';
 
+          styles.positionedStyle = current.positionedStyle.value;          
 
           watch(current.positionedStyle, (value) => {
-            styles.positionedStyle = current.positionedStyle.value;
+            styles.positionedStyle = value;
           });
         });
 
@@ -90,25 +94,27 @@ export class OverlayState {
 
         watch(that.show, (value) => {
           if (value) {
-            styles.containerStyle.display = originDisplay;
             that.config.strategy.attach?.();
           } else {
-            styles.containerStyle.display = 'none';
             that.config.strategy.detach?.();
           }
         });
 
         return () => (
           <Teleport to="#vue-cdk-overlay">
-            <div style={styles.containerStyle} class={containerClass} onClick={click}>
-              <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
-                {renderSlot(ctx.slots, 'default')}
+            <Transition name={props.transition}>
+              <div v-show={that.show.value} class={that.config.hasBackdrop ? "cdk-verlay-mask": ''}>
+                <div style={styles.containerStyle} onClick={click}>
+                  <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
+                    {renderSlot(ctx.slots, 'default')}
+                  </div>
+                </div>
               </div>
-            </div>
+            </Transition>
           </Teleport>
         );
       }
-    });
+    }) as any;
   }
 
   _setOverflow(enable: boolean) {

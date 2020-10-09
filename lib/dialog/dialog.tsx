@@ -1,7 +1,7 @@
-import { defineComponent, inject, onMounted, renderSlot, toRef, toRefs, watch } from "vue";
+import { defineComponent, inject, onMounted, renderSlot, Transition, watch } from "vue";
 import { overlayToken } from '../cdk';
 import '../theme-chalk/src/dialog.scss';
-export const EleDialog = defineComponent({
+export default defineComponent({
   props: {
     visible: {
       type: Boolean,
@@ -30,11 +30,12 @@ export const EleDialog = defineComponent({
     },
     showClose: Boolean,
     beforeClose: Function,
+    width: String,
   },
   setup(props, ctx) {
     const overlay = inject(overlayToken)!;
     const overlayState = overlay.create({
-      strategy: overlay.createPositionStrategy('global').centerVertically().centerHorizontally(),
+      strategy: overlay.createPositionStrategy('global').top('15vh').width(`${props.width || '50%'}`).centerHorizontally(),
       backdropClose: false,
       backdropClick: () => {
         hide();
@@ -42,16 +43,15 @@ export const EleDialog = defineComponent({
       hasBackdrop: true,
     });
     watch(() => props.visible, (value) => {
-      console.log(value);
       if (value) {
         overlayState.attach();
       } else {
         overlayState.detach();
       }
     });
-    
+
     const hide = () => {
-      // ctx.emit('update:visible', false);
+      ctx.emit('update:visible', false);
     }
 
     const handleClose = () => {
@@ -71,13 +71,13 @@ export const EleDialog = defineComponent({
       ) : undefined;
       return (
         <>
-          <overlayState.element>
+          <overlayState.element transition="dialog-fade">
             <div
               aria-modal="true"
               aria-label={props.title || 'dialog'}
               // key={props.key}
               class={`el-dialog ${props.customClass} ${center}`}
-              style={props.style}
+              style={`${props.style}`}
             >
               <div class="el-dialog__header">
                 <span class="el-dialog__title">{props.title}</span>

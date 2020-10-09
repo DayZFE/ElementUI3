@@ -1,11 +1,14 @@
 import { defineComponent, inject, ref, watch } from "vue";
-import { $message, EleUIProvider, getRefRect } from "../lib";
 import {
   Alert,
   Avatar,
   globalInject,
   viewportToken,
   OverlayCompo,
+  $message,
+  EleUIProvider,
+  getRefRect,
+  Backtop,
 } from "../lib";
 
 const App = defineComponent({
@@ -19,6 +22,7 @@ const App = defineComponent({
     const showModal2 = ref(false);
     return () => (
       <div>
+        <Backtop />
         <div
           style={{
             position: "fixed",

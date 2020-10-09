@@ -25,6 +25,8 @@ import { runWhileScroll } from "./cdk/tools";
  */
 export function backtopController(target?: Ref<string>) {
   const { BODY } = inject(platformToken)!;
+  // for ssr
+  // not body element , no val
   if (!BODY) return null;
   const container = ref<HTMLElement>(BODY);
   if (target) {
@@ -81,10 +83,15 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    const { container, visible, scrollToTop } = inject(
+    const backtop = inject(
       getFuncToken(backtopController, "ele-backtop"),
       backtopController()
-    )!;
+    );
+    // for ssr
+    // no backtop logic
+    // no content
+    if (!backtop) return null;
+    const { container, visible, scrollToTop } = backtop;
     runWhileScroll(() => {
       const scrollTop = container.value.scrollTop;
       visible.value = scrollTop >= props.visibilityHeight;

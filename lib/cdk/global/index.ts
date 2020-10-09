@@ -1,10 +1,11 @@
-import { provide } from "vue";
+import { inject, provide } from "vue";
 import { getClassToken } from "../tools";
 import Breakpoint from "./breakpoint";
 import Bidirection from "./bidirection";
 import Platform from "./platform";
 import Clipboard from "./clipboard";
 import ViewPort from "./viewport";
+import { over } from "lodash-es";
 
 // provide token
 export const platformToken = getClassToken(Platform);
@@ -29,4 +30,15 @@ export default function () {
   provide(bidirectionToken, new Bidirection());
   provide(clipboardToken, new Clipboard());
   provide(viewportToken, new ViewPort());
+
+  const platform = inject(platformToken)!;
+  if (platform.BROWSER) {
+    // if at browser environment
+    const overlayAnchor = document.createElement("div");
+    overlayAnchor.setAttribute("id", "cdk-overlay-anchor");
+    overlayAnchor.style.position = "fixed";
+    overlayAnchor.style.left = "0";
+    overlayAnchor.style.top = "0";
+    platform.BODY!.appendChild(overlayAnchor);
+  }
 }

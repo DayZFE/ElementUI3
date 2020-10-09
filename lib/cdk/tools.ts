@@ -1,4 +1,14 @@
-import { computed, InjectionKey, nextTick, Ref, ref, watch } from "vue";
+import { mount } from "@vue/test-utils";
+import {
+  computed,
+  InjectionKey,
+  isRef,
+  onBeforeUnmount,
+  onMounted,
+  Ref,
+  ref,
+  watch,
+} from "vue";
 
 /**
  * *handle typescript type by function
@@ -73,4 +83,70 @@ export function reactToService(dirty: Ref<null | undefined>) {
   const { dirty: localDirty, mark } = markDirty();
   watch(dirty, mark);
   return localDirty;
+}
+
+/**
+ * run a function while resize
+ *
+ * @export
+ * @param {() => void} func
+ * @returns
+ */
+export function runWhileResize(func: () => void) {
+  if (!(typeof document === "object" && !!document)) return;
+  onMounted(() => {
+    window.addEventListener("resize", func);
+    window.addEventListener("orientationchange", func);
+  });
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", func);
+    window.removeEventListener("orientationchange", func);
+  });
+}
+
+/**
+ * run while scroll
+ *
+ * @export
+ * @param {() => void} func
+ * @returns
+ */
+export function runWhileScroll(func: () => void) {
+  if (!(typeof document === "object" && !!document)) return;
+  onMounted(() => {
+    window.addEventListener("scroll", func, true);
+  });
+  onBeforeUnmount(() => {
+    window.removeEventListener("scroll", func, true);
+  });
+}
+
+/**
+ * get rect of element
+ *
+ * @export
+ * @param {Ref<Element>} elRef
+ * @returns
+ */
+export function getRefRect(elRef: Ref<Element | null | undefined>) {
+  const defaultValue = {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 0,
+    width: 0,
+  };
+  const rect = ref(defaultValue as DOMRect);
+  const getRect = () => {
+    if (!isRef(elRef) || !(elRef.value instanceof Element)) return;
+    rect.value =
+      elRef?.value?.getBoundingClientRect() || (defaultValue as DOMRect);
+  };
+  runWhileResize(getRect);
+  runWhileScroll(getRect);
+  onMounted(() => {
+    getRect();
+  });
+  return rect;
 }

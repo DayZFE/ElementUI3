@@ -1,5 +1,6 @@
 import { inject, onBeforeUnmount, ref, watch } from "vue";
 import { platformToken } from ".";
+import { runWhileResize } from "../tools";
 
 /**
  * current viewport rect & size
@@ -25,28 +26,25 @@ export default class ViewPort {
 
   constructor() {
     if (!this.isBrowser) return;
-    this.updateSize();
+    runWhileResize(this.updateSize);
     const body = document.documentElement || document.body;
-    const rect = body.getBoundingClientRect();
-    watch(this.size, (res) => {
-      const top = -rect.top || body.scrollTop || window.scrollY;
-      const left = -rect.left || body.scrollLeft || window.scrollX;
-      const { width, height } = res;
-      this.rect.value = {
-        top,
-        left,
-        bottom: top + height,
-        right: left + width,
-        width,
-        height,
-      };
-    });
-    window.addEventListener("resize", this.updateSize);
-    window.addEventListener("orientationchange", this.updateSize);
-
-    onBeforeUnmount(() => {
-      window.removeEventListener("resize", this.updateSize);
-      window.removeEventListener("orientationchange", this.updateSize);
-    });
+    watch(
+      this.size,
+      (res) => {
+        const rect = body.getBoundingClientRect();
+        const top = -rect.top || body.scrollTop || window.scrollY;
+        const left = -rect.left || body.scrollLeft || window.scrollX;
+        const { width, height } = res;
+        this.rect.value = {
+          top,
+          left,
+          bottom: top + height,
+          right: left + width,
+          width,
+          height,
+        };
+      },
+      { immediate: true }
+    );
   }
 }

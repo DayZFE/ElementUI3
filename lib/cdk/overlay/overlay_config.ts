@@ -15,4 +15,5 @@ export interface OverlayConfig {
   readonly backdropClick?: (() => void) | null;
   readonly backgroundBlock?: boolean;
   readonly backgroundClass?: string | string[];
+  readonly backgroundColor?: string;
 }

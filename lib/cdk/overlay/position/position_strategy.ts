@@ -5,9 +5,9 @@ import { OverlayProps } from '../overlay_props';
 export interface PositionStrategy {
   setup(): OverlayProps;
 
-  attach?(): void;
+  apply?(overlayWrapper: Element): void;
 
-  detach?(): void;
+  disapply?(): void;
 
   dispose(): void;
 }

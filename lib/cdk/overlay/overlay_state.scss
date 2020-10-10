@@ -1,21 +1,20 @@
-.cdk-verlay-mask {
+.cdk-overlay-container {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
+  display: flex;
+}
+
+.cdk-overlay-container__diabled {
+  pointer-events: none;
+}
+
+.cdk-overlay-container__background {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.vue-cdk-overlay-container {
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 1000;
-}
 
 .cdk-overlay-fade-enter-active,
 .cdk-overlay-fade-leave-active {

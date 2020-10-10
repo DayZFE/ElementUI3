@@ -3,6 +3,7 @@ export { default as Alert } from "./alert";
 export { default as Avatar } from "./avatar";
 export { default as Dialog } from './dialog';
 export { default as Button } from './button';
+export {default as Popover} from './popover';
 import { App } from "vue";
 import Cdk from './cdk';
 

@@ -1,5 +1,5 @@
-import { defineComponent, inject, onMounted, renderSlot, Transition, watch } from "vue";
-import { overlayToken } from '../cdk';
+import { defineComponent, inject, renderSlot, toRef, watch } from "vue";
+import { Overlay } from '../cdk';
 import '../theme-chalk/src/dialog.scss';
 export default defineComponent({
   props: {
@@ -33,23 +33,6 @@ export default defineComponent({
     width: String,
   },
   setup(props, ctx) {
-    const overlay = inject(overlayToken)!;
-    const overlayState = overlay.create({
-      strategy: overlay.createPositionStrategy('global').top('15vh').width(`${props.width || '50%'}`).centerHorizontally(),
-      backdropClose: false,
-      backdropClick: () => {
-        hide();
-      },
-      hasBackdrop: true,
-    });
-    watch(() => props.visible, (value) => {
-      if (value) {
-        overlayState.attach();
-      } else {
-        overlayState.detach();
-      }
-    });
-
     const hide = () => {
       ctx.emit('update:visible', false);
     }
@@ -62,6 +45,11 @@ export default defineComponent({
       }
     }
 
+    const visible = toRef(props, 'visible');
+    watch(visible, (value) => {
+      ctx.emit('update:visible', value);
+    });
+
     return () => {
       const center = props.center ? 'el-dialog--center' : '';
       const footer = ctx.slots['footer'] ? (
@@ -70,12 +58,10 @@ export default defineComponent({
         </div>
       ) : undefined;
       return (
-        <>
-          <overlayState.element transition="dialog-fade">
+          <Overlay v-model={[visible, 'visible']}>
             <div
               aria-modal="true"
               aria-label={props.title || 'dialog'}
-              // key={props.key}
               class={`el-dialog ${props.customClass} ${center}`}
               style={`${props.style}`}
             >
@@ -97,8 +83,7 @@ export default defineComponent({
               </div>
               {footer}
             </div>
-          </overlayState.element>
-        </>
+          </Overlay>
       );
     }
   }

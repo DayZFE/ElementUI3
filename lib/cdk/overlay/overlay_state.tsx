@@ -10,129 +10,99 @@ import {
   reactive,
   CSSProperties,
   onUnmounted,
-  Transition,
+  watchEffect, computed, Transition, inject
 } from "vue";
 import { OverlayConfig } from '.';
-import './overlay_state.css';
+import './overlay_state.scss';
+import { FlexiblePositionStrategy } from './position/flexible_position_strategy';
+import { GlobalPositionStrategy } from './position/global_position_strategy';
+import { PositionStrategy } from './position/position_strategy';
 
-export class OverlayState {
-  public readonly element: DefineComponent<{ transition: string }>;
 
-  private readonly show = ref(false);
+export const Overlay = defineComponent({
+  props: {
+    visible: {
+      type: Boolean,
+      default: '',
+    },
+    strategy: {
+      type: () => ({}) as PositionStrategy,
+      default: GlobalPositionStrategy
+    },
+    backgroundClass: {
+      type: String,
+      default: ''
+    },
+    backdropClick: Function,
+    backdropClose: Boolean,
+    backgroundBlock: Boolean,
+  },
+  setup(props, ctx) {
 
-  private readonly originOverflow = this.body.style.overflow;
+    const state = reactive<{
+      containerStyle: CSSProperties,
+      positionedStyle: CSSProperties,
+      wrapper?: Element,
+    }>({
+      containerStyle: {},
+      positionedStyle: {}
+    });
 
-  private isMounted = false;
 
-  constructor(
-    private readonly config: Required<OverlayConfig>,
-    private body: HTMLElement,
-  ) {
-    this.element = this.render();
-  }
+    const clickBackground = (event: Event) => {
+      event.preventDefault();
 
-  attach(): void {
-    if (!this.isMounted) {
-      console.warn('You must invoke this method after vue mounted or "onMounted()" hook.');
-      return;
-    }
-    this._setOverflow(true);
-    this.show.value = true;
-  }
+      props.backdropClick?.();
 
-  detach(): void {
-    if (!this.isMounted) {
-      console.warn('You must invoke this method after vue mounted or "onMounted()" hook.');
-      return;
-    }
-    this._setOverflow(false);
-    this.show.value = false;
-  }
-
-  render(): DefineComponent<{ transition: string }> {
-    const that = this;
-    return defineComponent({
-      name: 'cdk-overlay',
-      props: {
-        transition: {
-          type: String,
-          default: 'cdk-overlay-fade',
-        }
-      },
-      setup(props, ctx: SetupContext) {
-        const click = (event: Event) => {
-          event.preventDefault();
-
-          that.config.backdropClick?.();
-          if (that.config.backdropClose ?? true) {
-            that.detach();
-          }
-        };
-        const containerClass = that._getContainerClass();
-        const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({
-          containerStyle: {},
-          positionedStyle: {}
-        });
-
-        onMounted(() => {
-          that.isMounted = true;
-
-          const current = that.config.strategy.setup();
-          styles.containerStyle = current.containerStyle;
-          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'auto' : 'none';
-
-          styles.positionedStyle = current.positionedStyle.value;          
-
-          watch(current.positionedStyle, (value) => {
-            styles.positionedStyle = value;
-          });
-        });
-
-        onUnmounted(() => {
-          that.config.strategy.dispose();
-        });
-
-        watch(that.show, (value) => {
-          if (value) {
-            that.config.strategy.attach?.();
-          } else {
-            that.config.strategy.detach?.();
-          }
-        });
-
-        return () => (
-          <Teleport to="#vue-cdk-overlay">
-            <Transition name={props.transition}>
-              <div v-show={that.show.value} class={that.config.hasBackdrop ? "cdk-verlay-mask": ''}>
-                <div style={styles.containerStyle} onClick={click}>
-                  <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
-                    {renderSlot(ctx.slots, 'default')}
-                  </div>
-                </div>
-              </div>
-            </Transition>
-          </Teleport>
-        );
+      if (props.backdropClose ?? true) {
+        ctx.emit('update:visible', false);
       }
-    }) as any;
-  }
+    }
 
-  _setOverflow(enable: boolean) {
-    if (this.config.backgroundBlock) {
-      this.body.style.overflow = enable ? 'hidden' : this.originOverflow;
-    }
-  }
+    const originOverflow = document.body.style.overflow;
+    watchEffect((onInvalidate) => {
+      if (props.backgroundBlock) {
+        document.body.style.overflow = props.visible ? 'hidden' : originOverflow;
+      }
+      onInvalidate(() => {
+        document.body.style.overflow = originOverflow;
+      });
+    });
 
-  _getContainerClass() {
-    let bgClasses = 'overlay_container_background ';
-    const backgroundClass = this.config.backgroundClass;
-    if (!backgroundClass) {
-      return bgClasses;
-    }
-    if (Array.isArray(backgroundClass)) {
-      return bgClasses + backgroundClass.join(' ');
-    } else {
-      return bgClasses + backgroundClass;
-    }
+    onMounted(() => {
+      const overlayProps = props.strategy.setup();
+      state.containerStyle = overlayProps.containerStyle;
+      state.positionedStyle = overlayProps.positionedStyle.value;
+
+      watch(overlayProps.positionedStyle, (value) => {
+        state.positionedStyle = value;
+      });
+    });
+
+    onUnmounted(() => {
+      props.strategy.dispose();
+    });
+
+    return () => (
+      <Teleport to="#vue-cdk-overlay">
+        <Transition name="cdk-overlay-fade">
+          <div v-show={props.visible}>
+            <div
+              ref={(ref) => state.wrapper = ref as Element}
+              class={['cdk-overlay-container', props.backgroundClass]}
+              style={state.containerStyle}
+              onClick={clickBackground}
+            >
+              <div
+                style={state.positionedStyle}
+                onClick={event => event.cancelBubble = true}
+              >
+                {renderSlot(ctx.slots, 'default')}
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
+    )
   }
-}
+});

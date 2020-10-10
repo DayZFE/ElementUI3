@@ -43,7 +43,7 @@ export const Message = defineComponent({
     },
     duration: {
       type: Number,
-      default: 100000
+      default: 3000
     },
     showClose: {
       type: Boolean,
@@ -74,6 +74,7 @@ export const Message = defineComponent({
 
     const wrapperClass = computed(() => {
       const animationClass = visible.value ? 'el-message-move-in' : 'el-message-move-out';
+      // const animationClass = '';
       return ['el-message', `el-message--${props.type}`, animationClass];
     });
 
@@ -82,9 +83,6 @@ export const Message = defineComponent({
     });
 
     return function () {
-      // const animationClass = visible.value ? 'el-message-move-in' : 'el-message-move-out';
-      // const wrapperClass = `el-message el-message--${props.type}`;
-      // const iconTypeClass = `el-message__icon el-icon-${props.type}`;
       let icon;
       if (!!props.iconClass) {
         icon = <i class={props.iconClass}></i>;

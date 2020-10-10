@@ -5,6 +5,7 @@
 // components
 import { overlayPlugin } from "./overlay";
 import { collectionsPlugin } from "./collections";
+export * from "./lang";
 
 // default export
 // import cdk from 'cdk'

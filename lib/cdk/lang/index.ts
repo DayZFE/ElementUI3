@@ -51,120 +51,120 @@ export { default as vi } from "./vi";
 export { default as zhCN } from "./zh-CN";
 export { default as zhTW } from "./zh-TW";
 
-export const langPicker = {
+export interface LangConfig {
   colorpicker: {
-    confirm: "colorpicker.confirm",
-    clear: "colorpicker.clear",
-  },
+    confirm: string;
+    clear: string;
+  };
   datepicker: {
-    now: "datepicker.now",
-    today: "datepicker.today",
-    cancel: "datepicker.cancel",
-    clear: "datepicker.clear",
-    confirm: "datepicker.confirm",
-    selectDate: "datepicker.selectDate",
-    selectTime: "datepicker.selectTime",
-    startDate: "datepicker.startDate",
-    startTime: "datepicker.startTime",
-    endDate: "datepicker.endDate",
-    endTime: "datepicker.endTime",
-    prevYear: "datepicker.prevYear",
-    nextYear: "datepicker.nextYear",
-    prevMonth: "datepicker.prevMonth",
-    nextMonth: "datepicker.nextMonth",
-    year: "datepicker.year",
-    month1: "datepicker.month1",
-    month2: "datepicker.month2",
-    month3: "datepicker.month3",
-    month4: "datepicker.month4",
-    month5: "datepicker.month5",
-    month6: "datepicker.month6",
-    month7: "datepicker.month7",
-    month8: "datepicker.month8",
-    month9: "datepicker.month9",
-    month10: "datepicker.month10",
-    month11: "datepicker.month11",
-    month12: "datepicker.month12",
+    now: string;
+    today: string;
+    cancel: string;
+    clear: string;
+    confirm: string;
+    selectDate: string;
+    selectTime: string;
+    startDate: string;
+    startTime: string;
+    endDate: string;
+    endTime: string;
+    prevYear: string;
+    nextYear: string;
+    prevMonth: string;
+    nextMonth: string;
+    year: string;
+    month1: string;
+    month2: string;
+    month3: string;
+    month4: string;
+    month5: string;
+    month6: string;
+    month7: string;
+    month8: string;
+    month9: string;
+    month10: string;
+    month11: string;
+    month12: string;
     weeks: {
-      sun: "datepicker.weeks.sun",
-      mon: "datepicker.weeks.mon",
-      tue: "datepicker.weeks.tue",
-      wed: "datepicker.weeks.wed",
-      thu: "datepicker.weeks.thu",
-      fri: "datepicker.weeks.fri",
-      sat: "datepicker.weeks.sat",
-    },
+      sun: string;
+      mon: string;
+      tue: string;
+      wed: string;
+      thu: string;
+      fri: string;
+      sat: string;
+    };
     months: {
-      jan: "datepicker.months.jan",
-      feb: "datepicker.months.feb",
-      mar: "datepicker.months.mar",
-      apr: "datepicker.months.apr",
-      may: "datepicker.months.may",
-      jun: "datepicker.months.jun",
-      jul: "datepicker.months.jul",
-      aug: "datepicker.months.aug",
-      sep: "datepicker.months.sep",
-      oct: "datepicker.months.oct",
-      nov: "datepicker.months.nov",
-      dec: "datepicker.months.dec",
-    },
-  },
+      jan: string;
+      feb: string;
+      mar: string;
+      apr: string;
+      may: string;
+      jun: string;
+      jul: string;
+      aug: string;
+      sep: string;
+      oct: string;
+      nov: string;
+      dec: string;
+    };
+  };
   select: {
-    loading: "select.loading",
-    noMatch: "select.noMatch",
-    noData: "select.noData",
-    placeholder: "select.placeholder",
-  },
+    loading: string;
+    noMatch: string;
+    noData: string;
+    placeholder: string;
+  };
   cascader: {
-    noMatch: "cascader.noMatch",
-    loading: "cascader.loading",
-    placeholder: "cascader.placeholder",
-    noData: "cascader.noData",
-  },
+    noMatch: string;
+    loading: string;
+    placeholder: string;
+    noData: string;
+  };
   pagination: {
-    goto: "pagination.goto",
-    pagesize: "pagination.pagesize",
-    total: "pagination.total",
-    pageClassifier: "pagination.pageClassifier",
-  },
+    goto: string;
+    pagesize: string;
+    total: string;
+    pageClassifier: string;
+  };
   messagebox: {
-    title: "messagebox.title",
-    confirm: "messagebox.confirm",
-    cancel: "messagebox.cancel",
-    error: "messagebox.error",
-  },
+    title: string;
+    confirm: string;
+    cancel: string;
+    error: string;
+  };
   upload: {
-    deleteTip: "upload.deleteTip",
-    delete: "upload.delete",
-    preview: "upload.preview",
-    continue: "upload.continue",
-  },
+    deleteTip: string;
+    delete: string;
+    preview: string;
+    continue: string;
+  };
   table: {
-    emptyText: "table.emptyText",
-    confirmFilter: "table.confirmFilter",
-    resetFilter: "table.resetFilter",
-    clearFilter: "table.clearFilter",
-    sumText: "table.sumText",
-  },
+    emptyText: string;
+    confirmFilter: string;
+    resetFilter: string;
+    clearFilter: string;
+    sumText: string;
+  };
   tree: {
-    emptyText: "tree.emptyText",
-  },
+    emptyText: string;
+  };
   transfer: {
-    noMatch: "transfer.noMatch",
-    noData: "transfer.noData",
-    titles: "transfer.titles",
-    filterPlaceholder: "transfer.filterPlaceholder",
-    noCheckedFormat: "transfer.noCheckedFormat",
-    hasCheckedFormat: "transfer.hasCheckedFormat",
-  },
+    noMatch: string;
+    noData: string;
+    titles: string[];
+    filterPlaceholder: string;
+    noCheckedFormat: string;
+    hasCheckedFormat: string;
+  };
   image: {
-    error: "image.error",
-  },
+    error: string;
+  };
   pageHeader: {
-    title: "pageHeader.title",
-  },
+    title: string;
+  };
   popconfirm: {
-    confirmButtonText: "popconfirm.confirmButtonText",
-    cancelButtonText: "popconfirm.cancelButtonText",
-  },
-};
+    confirmButtonText: string;
+    cancelButtonText: string;
+  };
+}

@@ -20,6 +20,8 @@ export abstract class MessageService {
     this.create({ type: 'warning', content, options });
   }
 
+  abstract closeAll(): void;
+
   protected getInstanceId(): string {
     return `eleMessage-${++_$counter}`;
   }
@@ -50,6 +52,10 @@ export class MessageServiceImpl extends MessageService {
 
     // trigger change
     this.instances.value = this.instances.value;
+  }
+
+  closeAll(): void {
+    this.instances.value = [];
   }
 
   destroy(id: string) {

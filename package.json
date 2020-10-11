@@ -23,14 +23,14 @@
     "build-description": "vue-cli-service build"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.161",
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
-    "lodash": "^4.17.20",
+    "lodash-es": "^4.17.15",
     "vue": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
+    "@types/lodash-es": "^4.17.3",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",

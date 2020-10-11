@@ -119,34 +119,26 @@
   transform: translate(-50%, -100%);
 }
 
-.el-message__background {
-  background-color: rgba(0, 0, 0, 0);
-}
-
 
 .el-message-move-in {
   animation-duration: 0.2s;
   animation-name: MessageMoveIn;
-  transform: translate(-50%, 0%);
   opacity: 1;
 }
 
 .el-message-move-out {
   animation-duration: 0.2s;
   animation-name: MessageMoveOut;
-  transform: translate(-50%, -100%);
   opacity: 0;
 }
 
 @keyframes MessageMoveIn {
   0% {
     transform: translate(-50%, -100%);
-    // transform: translateX(-50%);
     opacity: 0;
   }
   100% {
     transform: translate(-50%, 0%);
-    // transform: translate(-50%);
     opacity: 1;
   }
 }

@@ -1,5 +1,5 @@
 import { coerceCssPixelValue } from '../cdk/coercion';
-import { defineComponent, onMounted, onUnmounted, ref, renderSlot, } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref, renderSlot, Transition } from "vue";
 import '../theme-chalk/src/message.scss';
 
 class Timer {
@@ -49,14 +49,11 @@ export const Message = defineComponent({
       type: Boolean,
       default: false
     },
-    onDestroy: {
-      type: Function,
-      default: undefined,
-    },
     top: {
       type: Number,
       default: 0,
-    }
+    },
+    onDestroy: Function,
   },
   setup(props, ctx) {
     const visible = ref(true);
@@ -75,28 +72,44 @@ export const Message = defineComponent({
       timer.end();
     });
 
-    return function () {
+    const wrapperClass = computed(() => {
       const animationClass = visible.value ? 'el-message-move-in' : 'el-message-move-out';
-      const wrapperClass = `el-message el-message--${props.type} ${animationClass}`;
-      const iconTypeClass = `el-message__icon el-icon-${props.type}`;
+      // const animationClass = '';
+      return ['el-message', `el-message--${props.type}`, animationClass];
+    });
+
+    const iconTypeClass = computed(() => {
+      return [`el-message__icon`, `el-icon-${props.type}`];
+    });
+
+    return function () {
       let icon;
       if (!!props.iconClass) {
         icon = <i class={props.iconClass}></i>;
       } else {
-        icon = <i class={iconTypeClass}></i>;
+        icon = <i class={iconTypeClass.value}></i>;
       }
+
       let closeIcon;
       if (props.showClose) {
         closeIcon = <i class="el-message__closeBtn el-icon-close" onClick={close}></i>
       }
 
       return (
-        <div class={wrapperClass} style={{ top: coerceCssPixelValue(props.top || 20) }} onMouseenter={() => timer.end()} onMouseleave={() => timer.start()}>
-          {icon}
-          <p class="el-message__content">{props.content}</p>
-          {renderSlot(ctx.slots, 'default')}
-          {closeIcon}
-        </div>
+        <Transition name="el-message-fade">
+          <div
+            v-show={visible.value}
+            class={wrapperClass.value}
+            style={{ top: coerceCssPixelValue(props.top || 20) }}
+            onMouseenter={() => timer.end()}
+            onMouseleave={() => timer.start()}
+          >
+            {icon}
+            <p class="el-message__content">{props.content}</p>
+            {renderSlot(ctx.slots, 'default')}
+            {closeIcon}
+          </div>
+        </Transition>
       );
     };
   }

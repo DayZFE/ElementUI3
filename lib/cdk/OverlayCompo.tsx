@@ -70,8 +70,13 @@ export default defineComponent({
     });
     return () => (
       <Teleport to='#cdk-overlay-anchor'>
-        <Transition name={props.transition}>
-          <div class='cdk-overlay-compo' v-show={props.show}>
+        <Transition
+          name={props.transition}
+          persisted
+          appear
+          v-show={props.show}
+        >
+          <div class='cdk-overlay-compo'>
             <div
               class='cdk-overlay-backdrop'
               v-show={props.showBackdrop}

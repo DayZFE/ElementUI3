@@ -96,7 +96,7 @@ export default defineComponent({
     });
     const hasDefaultSlot = ctx.slots["default"] ? true : false;
     return () => (
-      <Transition name='el-fade-in'>
+      <Transition name='el-fade-in' appear mode='out-in'>
         {visible.value ? (
           <div
             onClick={(e) => {

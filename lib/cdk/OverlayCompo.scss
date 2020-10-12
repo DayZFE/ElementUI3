@@ -6,10 +6,10 @@
   height: 100vh;
   .cdk-overlay-backdrop {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    left: -10%;
+    top: -10%;
+    width: 120%;
+    height: 120%;
     z-index: 1;
     background-color: rgba(0, 0, 0, 0.7);
   }
@@ -21,10 +21,21 @@
 
 .cdk-overlay-fade-enter-active,
 .cdk-overlay-fade-leave-active {
-  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
 }
-.cdk-overlay-fade-enter,
-.cdk-overlay-fade-leave,
-.cdk-overlay-fade-leave-active {
+.cdk-overlay-fade-enter-from,
+.cdk-overlay-fade-leave-to {
   opacity: 0;
+}
+.cdk-overlay-fade-enter-from {
+  transform: translateY(-10%);
+}
+.cdk-overlay-fade-leave-to {
+  transform: translateY(10%);
+}
+
+.cdk-overlay-fade-enter-to,
+.cdk-overlay-fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }

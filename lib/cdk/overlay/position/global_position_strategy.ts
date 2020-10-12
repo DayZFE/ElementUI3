@@ -121,7 +121,6 @@ export class GlobalPositionStrategy extends PositionStrategy {
       marginRight: this._rightOffset,
       marginTop: this._topOffset,
       marginBottom: this._bottomOffset,
-      pointerEvents: "auto",
     });
     // container style must set display to flex.
     const containerStyle: CSSProperties = {

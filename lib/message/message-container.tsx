@@ -2,7 +2,7 @@ import { computed, defineComponent, inject, Ref, watch } from "vue";
 import { Message } from './message';
 import { MessageData } from "./types";
 import '../theme-chalk/src/message.scss';
-import { Overlay } from '../cdk';
+import { GlobalPositionStrategy, Overlay } from '../cdk';
 
 export const MessageContainerFactory = (datas: Ref<Required<MessageData>[]>, destroy: (id: string) => void) => defineComponent({
   setup(_, ctx) {
@@ -20,12 +20,17 @@ export const MessageContainerFactory = (datas: Ref<Required<MessageData>[]>, des
           iconClass={data.iconClass}
           content={data.content}
           onDestroy={destroy}
-          top={(index) * 56 + 20}
         ></Message>
       ));
       return (
-        <Overlay v-model={[visible.value, 'visible']} hasBackdrop={false}>
-          {...messages}
+        <Overlay
+          v-model={[visible.value, 'visible']}
+          hasBackdrop={false}
+          // strategy={new GlobalPositionStrategy().centerHorizontally()}
+        >
+          <div class="el-message-container">
+            {...messages}
+          </div>
         </Overlay>
       );
     }

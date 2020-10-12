@@ -49,14 +49,11 @@ export const Message = defineComponent({
       type: Boolean,
       default: false
     },
-    top: {
-      type: Number,
-      default: 0,
-    },
     onDestroy: Function,
   },
   setup(props, ctx) {
     const visible = ref(true);
+
     const timer = new Timer(() => {
       visible.value = false;
       setTimeout(() => {
@@ -96,11 +93,10 @@ export const Message = defineComponent({
       }
 
       return (
-        <Transition name="el-message-fade">
+        <Transition name="el-message-fade" appear persisted>
           <div
             v-show={visible.value}
             class={wrapperClass.value}
-            style={{ top: coerceCssPixelValue(props.top || 20) }}
             onMouseenter={() => timer.end()}
             onMouseleave={() => timer.start()}
           >

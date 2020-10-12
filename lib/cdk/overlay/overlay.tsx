@@ -8,12 +8,26 @@ import {
   CSSProperties,
   onUnmounted,
   watchEffect, 
-  Transition, Ref, computed
+  Transition, Ref, computed, inject, provide
 } from "vue";
 import './overlay_state.scss';
 import { GlobalPositionStrategy } from './position/global_position_strategy';
 import { PositionStrategy } from './position/position_strategy';
 
+
+class OverlayProvider {
+  div?: Element | null;
+  constructor(document: Document) {
+    let div = this.div = document.getElementById('vue-cdk-overlay');
+    if (!div) {
+      div = this.div = document.createElement('div');
+      div.id = 'vue-cdk-overlay';
+      div.className = 'vue-cdk-overlay-container';
+      document.body.append(div);
+    }
+  }
+}
+const overlayProvider = new OverlayProvider(document);
 
 /**
  * @description
@@ -59,9 +73,11 @@ export const Overlay = defineComponent({
     backdropClose: Boolean,
     backgroundBlock: Boolean,
     backdropClick: Function,
+    panelClass: String,
   },
   setup(props, ctx) {
-
+    inject('cdk-overlay-provider', overlayProvider);
+    
     const state = reactive<{
       containerStyle: CSSProperties,
       positionedStyle: CSSProperties,
@@ -127,6 +143,7 @@ export const Overlay = defineComponent({
               onClick={clickBackground}
             >
               <div
+                class={props.panelClass}
                 style={state.positionedStyle}
                 onClick={event => event.cancelBubble = true}
               >

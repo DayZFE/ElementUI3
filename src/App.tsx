@@ -1,11 +1,12 @@
 import { ComponentPublicInstance, defineComponent, Directive, inject, onMounted, ref, renderSlot } from "vue";
-import { $message, EleUIProvider, Dialog, Button, Popover } from "../lib";
+import { $message, EleUIProvider, Dialog, Button, Popover, $notify } from "../lib";
 import { Alert, Avatar } from "../lib";
 
 const App = defineComponent({
   name: "el-app",
   setup(_, ctx) {
     const message = inject($message)!;
+    const notification = inject($notify)!;
     const visible = ref(false);
 
     const popoverProps = {
@@ -52,6 +53,34 @@ const App = defineComponent({
               <Button style="pointer-event: auto">click popover</Button>
             </Popover>
           </div>
+          <div>
+            <Button onClick={() => notification.notify({
+              type: 'info',
+              title: '标题',
+              message: '信息信息信息'
+            })}>show notification tr</Button>
+            <Button onClick={() => notification.notify({
+              type: 'info',
+              title: '标题',
+              message: '信息信息信息',
+              position: 'top-left'
+            })}>show notification tl</Button>
+                        <Button onClick={() => notification.notify({
+              type: 'info',
+              title: '标题',
+              message: '信息信息信息',
+              position: 'bottom-right',
+              duration: 0
+            })}>show notification br</Button>
+            <Button onClick={() => notification.notify({
+              type: 'info',
+              title: '标题',
+              message: '信息信息信息',
+              position: 'bottom-left',
+              duration: 0
+            })}>show notification bl</Button>
+
+          </div>
 
           <Dialog title="提示" width="30%" v-model={[visible.value, 'visible']} v-slots={{
             footer: () => (
@@ -74,7 +103,7 @@ export default defineComponent({
   setup() {
     return () => (
       <EleUIProvider>
-        <App ><div>hello</div></App>
+        <App />
       </EleUIProvider>
     );
   },

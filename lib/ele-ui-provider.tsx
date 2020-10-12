@@ -1,4 +1,4 @@
-import { defineComponent, provide, renderSlot } from "vue";
+import { defineComponent, renderSlot } from "vue";
 import { getClassToken } from "./cdk/tools";
 import { MessageService, MessageServiceImpl } from "./message/message.service";
 import { NotificationService, NotificationServiceImpl } from './notification/notification.service';
@@ -15,7 +15,7 @@ export const EleUIProvider = defineComponent({
       <>
         {renderSlot(ctx.slots, 'default')}
         <messageService.container />
-        <notificationService.element />
+        <notificationService.container />
       </>
     )
   }

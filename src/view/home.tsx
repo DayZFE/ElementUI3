@@ -11,6 +11,7 @@ import {
   BreadcrumbItem,
   Button,
   ButtonGroup,
+  Calendar,
 } from "../../lib";
 export default defineComponent({
   name: "home",
@@ -129,6 +130,9 @@ export default defineComponent({
               下一页<i class='el-icon-arrow-right el-icon--right'></i>
             </Button>
           </ButtonGroup>
+        </p>
+        <p>
+          <Calendar />
         </p>
 
         <div style='height:200px;overflow-y:auto'>

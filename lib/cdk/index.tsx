@@ -6,6 +6,8 @@
 import { overlayPlugin } from "./overlay";
 import { collectionsPlugin } from "./collections";
 export * from "./lang";
+export * from "./date/dataUtils";
+export { default as month } from "./date/month";
 
 // default export
 // import cdk from 'cdk'

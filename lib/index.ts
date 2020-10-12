@@ -19,7 +19,7 @@ export {
   viewportToken,
 } from "./cdk/global";
 export * from "./cdk/tools";
-export { default as calendar } from "./cdk/date/calendar";
+export * from "./cdk";
 
 export default {
   install(app: App, ...options: any[]) {

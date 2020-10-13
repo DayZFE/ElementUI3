@@ -50,7 +50,7 @@ const App = defineComponent({
           </div>
           <div style="position: fixed; top: 50%; left: 50%;">
             <Popover {...popoverProps}>
-              <Button style="pointer-event: auto">click popover</Button>
+              <Button>click popover</Button>
             </Popover>
           </div>
           <div>
@@ -65,19 +65,19 @@ const App = defineComponent({
               message: '信息信息信息',
               position: 'top-left'
             })}>show notification tl</Button>
-                        <Button onClick={() => notification.notify({
+            <Button onClick={() => notification.notify({
               type: 'info',
               title: '标题',
               message: '信息信息信息',
               position: 'bottom-right',
-              duration: 0
             })}>show notification br</Button>
             <Button onClick={() => notification.notify({
               type: 'info',
               title: '标题',
               message: '信息信息信息',
               position: 'bottom-left',
-              duration: 0
+              duration: 0,
+              showClose: true
             })}>show notification bl</Button>
 
           </div>

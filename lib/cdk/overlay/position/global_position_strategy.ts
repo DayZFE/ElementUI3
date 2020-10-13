@@ -90,7 +90,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Clears any previously set horizontal position.
    * @param offset Overlay offset from the horizontal center.
    */
-  centerHorizontally(offset: string = ''): this {
+  centerY(offset: string = ''): this {
     this.left(offset);
     this._justifyContent = 'center';
     return this;
@@ -102,7 +102,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    *
    * @param offset Overlay offset from the vertical center.
    */
-  centerVertically(offset: string = ''): this {
+  centerX(offset: string = ''): this {
     this.top(offset);
     this._alignItems = 'center';
     return this;

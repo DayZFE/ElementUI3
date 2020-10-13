@@ -7,13 +7,18 @@ import {
   reactive,
   CSSProperties,
   onUnmounted,
-  watchEffect, 
-  Transition, Ref, computed, inject, provide
+  watchEffect,
+  Transition, 
+  Ref, 
+  computed, 
+  inject,
+  VNode,
+  provide
 } from "vue";
-import './overlay_state.scss';
 import { GlobalPositionStrategy } from './position/global_position_strategy';
 import { PositionStrategy } from './position/position_strategy';
-
+import './overlay.scss';
+import { method } from 'lodash-es';
 
 class OverlayProvider {
   div?: Element | null;
@@ -52,15 +57,15 @@ export interface OverlayProps {
   positionedStyle: Ref<CSSProperties>;
 }
 
+export const provideStrategy = (strategy: PositionStrategy) => {
+  provide('cdk-overlay-strategy', strategy);
+}
+
 export const Overlay = defineComponent({
   props: {
     visible: {
       type: Boolean,
-      default: '',
-    },
-    strategy: {
-      type: PositionStrategy,
-      default: new GlobalPositionStrategy()
+      default: false,
     },
     backgroundClass: {
       type: String,
@@ -70,18 +75,23 @@ export const Overlay = defineComponent({
       type: Boolean,
       default: true,
     },
-    backdropClose: Boolean,
+    backdropClose: {
+      type: Boolean,
+      default: true,
+    },
     backgroundBlock: Boolean,
     backdropClick: Function,
     panelClass: String,
   },
   setup(props, ctx) {
     inject('cdk-overlay-provider', overlayProvider);
-    
+    const strategy = inject('cdk-overlay-strategy', new PositionStrategy());
+
     const state = reactive<{
       containerStyle: CSSProperties,
       positionedStyle: CSSProperties,
-      wrapper?: Element,
+      overlayElement?: Element,
+      overlayWrapper?: HTMLElement,
     }>({
       containerStyle: {},
       positionedStyle: {}
@@ -92,8 +102,7 @@ export const Overlay = defineComponent({
       event.preventDefault();
 
       props.backdropClick?.();
-
-      if (props.backdropClose ?? true) {
+      if (props.backdropClose) {
         ctx.emit('update:visible', false);
       }
     }
@@ -109,22 +118,33 @@ export const Overlay = defineComponent({
     });
 
     onMounted(() => {
-      const overlayProps = props.strategy.setup();
-      state.containerStyle = overlayProps!.containerStyle;
-      state.positionedStyle = overlayProps!.positionedStyle.value;
+      const overlayProps = strategy.setup();
 
-      watch(overlayProps!.positionedStyle, (value) => {
+      state.containerStyle = overlayProps!.containerStyle;
+      watch(overlayProps.positionedStyle, (value) => {
         state.positionedStyle = value;
+        console.log(value);
+      }, {immediate: true, deep: true});
+
+      watch(() => props.visible, (value) => {
+        if(value) {
+          setTimeout(() => {
+            strategy.apply?.(state.overlayElement!);
+          }, 0);
+        } else {
+          strategy.disapply?.();
+        }
       });
+      // state.overlayElement?.parentNode?.removeChild(state.overlayElement);
     });
 
     onUnmounted(() => {
-      props.strategy.dispose();
+      strategy.dispose();
     });
 
     const containerClass = computed(() => {
       const clazz = ['cdk-overlay-container'];
-      if(!props.hasBackdrop) {
+      if (!props.hasBackdrop) {
         clazz.push('cdk-overlay-container__diabled');
       } else {
         clazz.push(props.backgroundClass);
@@ -137,22 +157,22 @@ export const Overlay = defineComponent({
         <Transition name="cdk-overlay-fade">
           <div v-show={props.visible}>
             <div
-              ref={(ref) => state.wrapper = ref as Element}
               class={containerClass.value}
               style={state.containerStyle}
               onClick={clickBackground}
+              ref={(ref) => state.overlayWrapper = ref as HTMLElement}
             >
               <div
-                class={props.panelClass}
+                ref={(ref) => state.overlayElement = ref as HTMLElement}
                 style={state.positionedStyle}
                 onClick={event => event.cancelBubble = true}
               >
-                {renderSlot(ctx.slots, 'default')}
+                { renderSlot(ctx.slots, 'default')}
               </div>
             </div>
           </div>
         </Transition>
       </Teleport>
     )
-  }
+  },
 });

@@ -111,8 +111,8 @@ export const Notification = defineComponent({
           <div
             v-show={visible.value}
             class={panelClass.value}
-            onMouseenter={() => timer?.start()}
-            onMouseleave={() => timer?.end()}
+            onMouseenter={() => timer?.end()}
+            onMouseleave={() => timer?.start()}
             onClick={click}
             role="alert"
           >

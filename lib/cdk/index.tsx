@@ -8,3 +8,4 @@
 // export const CdkTest = Test;
 
 export * from "./overlay";
+export * from './tree';

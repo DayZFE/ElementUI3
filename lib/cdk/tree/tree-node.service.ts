@@ -1,9 +1,9 @@
-import { TreeData } from "./TreeNode";
+import { TreeData } from "./tree-node";
 
 export interface TreeNodeData {
   label: string;
-  value: any;
-  children: TreeNodeData[];
+  value?: any;
+  children?: TreeNodeData[];
 }
 export default class CdkTreeNode {
   currentNode: TreeData | null = null;

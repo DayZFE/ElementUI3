@@ -1,11 +1,11 @@
-import { defineComponent, inject, renderSlot, toRef, Transition, watch } from "vue";
-import { Overlay, GlobalPositionStrategy } from '../cdk';
+import { defineComponent, inject, ref, renderSlot, toRef, Transition, watch } from "vue";
+import { Overlay, GlobalPositionStrategy, provideStrategy } from '../cdk';
 import '../theme-chalk/src/dialog.scss';
 export default defineComponent({
   props: {
     visible: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     // key: String,
     title: {
@@ -45,10 +45,7 @@ export default defineComponent({
       }
     }
 
-    const visible = toRef(props, 'visible');
-    watch(visible, (value) => {
-      ctx.emit('update:visible', value);
-    });
+    provideStrategy(new GlobalPositionStrategy().centerX().centerY());
 
     return () => {
       const center = props.center ? 'el-dialog--center' : '';
@@ -59,14 +56,13 @@ export default defineComponent({
       ) : undefined;
       return (
         <Overlay 
-          v-model={[visible.value, 'visible']} 
-          strategy={new GlobalPositionStrategy().centerHorizontally().centerVertically()} 
+          visible={props.visible} 
           backdropClick={hide}
           backgroundBlock={true}
         >
           <Transition name="el-dialog-fade">
             <div
-              v-show={visible.value}
+              v-show={props.visible}
               aria-modal="true"
               aria-label={props.title || 'dialog'}
               class={`el-dialog ${props.customClass} ${center}`}

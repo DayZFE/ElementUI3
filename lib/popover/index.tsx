@@ -1,6 +1,28 @@
-import { defineComponent, ref, inject, renderSlot, onMounted, watchEffect, onUnmounted, computed, watch, CSSProperties, Transition } from 'vue';
-import { ConnectionPosition, Overlay } from '../cdk';
+import { defineComponent, ref, inject, renderSlot, onMounted, watchEffect, onUnmounted, computed, watch, CSSProperties, Transition, toRef, reactive } from 'vue';
+import { ConnectionPosition, FlexiblePositionStrategy, Overlay, provideStrategy } from '../cdk';
 import '../theme-chalk/src/popper.scss';
+
+const positionMap: { [key in string]: ConnectionPosition } = {
+  'top': { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
+  'top-start': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
+  'top-end': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
+  'bottom': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
+  'bottom-start': { originX: 'left', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
+  'bottom-end': { originX: 'right', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
+  'left': { originX: 'center', originY: 'top', overlayX: 'left', overlayY: 'center' },
+  'left-start': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'top' },
+  'left-end': { originX: 'right', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
+  'right': { originX: 'center', originY: 'top', overlayX: 'right', overlayY: 'center' },
+  'right-start': { originX: 'left', originY: 'top', overlayX: 'right', overlayY: 'top' },
+  'right-end': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
+}
+
+
+type Placement = 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end';
+
+type ArrowPlacement = 'top' | 'left' | 'bottom' | 'right';
+
+type TriggerType = 'click' | 'focus' | 'hover' | 'manual';
 
 
 export function addEvent<E extends Element>(target: E, type: string, fn: (event: Event) => void) {
@@ -10,7 +32,6 @@ export function addEvent<E extends Element>(target: E, type: string, fn: (event:
   }
 }
 
-type Placement = 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end';
 
 export default defineComponent({
   props: {
@@ -28,16 +49,15 @@ export default defineComponent({
     },
     showPopper: {
       type: Boolean,
-      default: '',
+      default: false,
     },
     width: {
       type: Number,
-      default: 0
+      default: 150
     },
     trigger: {
-      type: String as () => 'click' | 'focus' | 'hover' | 'manual',
+      type: String as () => TriggerType,
       default: 'click',
-      // validator: value => ['click', 'focus', 'hover', 'manual'].indexOf(value as string) > -1,
     },
     placement: {
       type: String as () => Placement,
@@ -47,78 +67,29 @@ export default defineComponent({
   },
   setup(props) {
     const visible = ref(false);
-
     const bindingElement = ref<Element>();
 
-    const state = computed<{
-      position: ConnectionPosition,
-      arrowStyle?: CSSProperties,
-      arrowPlacement: 'top' | 'left' | 'bottom' | 'right',
-    }>(() => {
-      switch (props.placement) {
-        case 'top': return {
-          position: { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
-          arrowPlacement: 'top',
-        };
-        case 'top-start': return {
-          position: { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
-          arrowPlacement: 'top',
-          arrowStyle: { left: '16px' },
-        };
-        case 'top-end': return {
-          position: { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
-          arrowPlacement: 'top',
-          arrowStyle: { right: '16px' },
-        };
-        case 'bottom': return {
-          position: { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
-          arrowPlacement: 'bottom',
-        };
-        case 'bottom-start': return {
-          position: { originX: 'left', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
-          arrowPlacement: 'bottom',
-          arrowStyle: { left: '16px' },
-        };
-        case 'bottom-end': return {
-          position: { originX: 'right', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
-          arrowPlacement: 'bottom',
-          arrowStyle: { right: '16px' },
-        };
-        case 'left': return {
-          position: { originX: 'center', originY: 'top', overlayX: 'left', overlayY: 'center' },
-          arrowPlacement: 'left',
-        };
-        case 'left-start': return {
-          position: { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'top' },
-          arrowPlacement: 'left',
-          arrowStyle: { top: '12px' },
-        };
-        case 'left-end': return {
-          position: { originX: 'right', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
-          arrowPlacement: 'left',
-          arrowStyle: { bottom: '12px' },
-        };
-        case 'right': return {
-          position: { originX: 'center', originY: 'top', overlayX: 'right', overlayY: 'center' },
-          arrowPlacement: 'right',
-        };
-        case 'right-start': return {
-          position: { originX: 'left', originY: 'top', overlayX: 'right', overlayY: 'top' },
-          arrowPlacement: 'right',
-          arrowStyle: { top: '12px' },
-        };
-        case 'right-end': return {
-          position: { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
-          arrowPlacement: 'right',
-          arrowStyle: { bottom: '12px' },
-        };
-        default: return {
-          position: { originX: 'left', originY: 'top', overlayX: 'center', overlayY: 'top' },
-          arrowPlacement: 'top',
-        };
-      }
+    const state = computed(() => {
+      return {
+        position: positionMap[props.placement],
+        arrowStyle: {} as CSSProperties,
+        arrowPlacement: (props.placement.match(/(top|left|bottom|right)/)?.[0] || 'top') as ArrowPlacement,
+      };
     });
 
+    const popoverClass = computed(() => {
+      const clazz = ['el-popover', 'el-popper'];
+      if (props.popperClass) {
+        clazz.push(props.popperClass);
+      }
+      if (props.content) {
+        clazz.push('el-popover--plain');
+      }
+      return clazz;
+    });
+
+    provideStrategy( new FlexiblePositionStrategy(bindingElement, window).positionPair(state.value.position));
+    
     watchEffect((onInvalidate) => {
       const fns: (() => void)[] = [];
       const target = bindingElement.value;
@@ -127,11 +98,14 @@ export default defineComponent({
       }
       if (props.trigger === 'click') {
         fns.push(addEvent(target, 'click', (event) => {
-
+          visible.value = true;
         }));
       } else if (props.trigger === 'focus') {
-        fns.push(addEvent(target, 'click', (event) => {
-
+        fns.push(addEvent(target, 'mouseenter', () => {
+          visible.value = true;
+        }));
+        fns.push(addEvent(target, 'mouseleave', () => {
+          visible.value = false;
         }));
       } else if (props.trigger === 'hover') {
         fns.push(addEvent(target, 'hover', (event) => {
@@ -148,22 +122,28 @@ export default defineComponent({
     return {
       visible,
       bindingElement,
+      popoverClass,
+      arrowPlacement: state.value.arrowPlacement,
       arrowStyle: state.value.arrowStyle,
-      arrowPlacement: state.value.arrowPlacement
+      position: state.value.position,
     }
   },
   render() {
-    const { $props: props, $slots: slots, arrowStyle, arrowPlacement } = this;
+    const { $props: props, $slots: slots, arrowStyle, arrowPlacement, position, popoverClass } = this;
     const hidden = (props.disabled || !props.showPopper) ? 'true' : 'false';
     return (
       <>
-        <div ref={(ref) => this.bindingElement = (ref as Element).children[0]}>
+        <div ref={(ref) => this.bindingElement = (ref as Element).children[0] || ref}>
           {renderSlot(slots, 'default')}
         </div>
-        <Overlay v-model={[this.visible, 'visible']}>
-          <Transition name="">
+        <Overlay
+          v-model={[this.visible, 'visible']}
+          backgroundClass={'el-popover__background'}
+        >
+          <Transition name="el-dialog-fade">
             <div
-              class={['el-popover', 'el-popper', props.popperClass, props.content && 'el-popover--plain']}
+              v-show={this.visible}
+              class={popoverClass}
               style={{ width: `${props.width}px` }}
               aria-hidden={hidden}
               x-placement={arrowPlacement}

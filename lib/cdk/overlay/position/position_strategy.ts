@@ -1,11 +1,15 @@
+import { ref } from 'vue';
 import { OverlayProps } from '../overlay';
 
 export class PositionStrategy {
-  setup(): OverlayProps | undefined {
-    return ;
+  setup(): OverlayProps {
+    return {
+      positionedStyle: ref({}),
+      containerStyle: {}
+    };
   }
 
-  apply?(overlayWrapper: Element): void {
+  apply?(overlayElement: Element): void {
 
   }
 

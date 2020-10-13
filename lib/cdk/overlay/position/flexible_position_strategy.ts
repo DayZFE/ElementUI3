@@ -1,7 +1,7 @@
 import { ConnectionPosition, ConnectionPositionPair, HorizontalConnectionPos, VerticalConnectionPos } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { CSSProperties, isRef, ref, Ref } from 'vue';
+import { CSSProperties, isRef, ref, Ref, watch } from 'vue';
 import { OverlayProps } from '../overlay';
 interface Point {
   x: number;
@@ -34,7 +34,10 @@ export class FlexiblePositionStrategy extends PositionStrategy {
 
   private isVisible = false;
 
-  private positionedStyle = ref<CSSProperties>({});
+  private positionedStyle = ref<CSSProperties>({position: 'static'});
+
+  private height = 100;
+  private width = 100;
 
   constructor(
     private _origin: FlexiblePositionStrategyOrigin,
@@ -42,7 +45,7 @@ export class FlexiblePositionStrategy extends PositionStrategy {
   ) {
     super();
    }
-
+   
   setup(): OverlayProps {
     return {
       positionedStyle: this.positionedStyle,
@@ -56,9 +59,9 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     };
   }
 
-  apply(overlayWrapper: Element): void {
+  apply(panel: HTMLElement): void {
     this.isVisible = true;
-    this._calculatePosition(overlayWrapper);
+    this._calculatePosition(panel);
   }
 
   disapply(): void {
@@ -118,46 +121,45 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     return this;
   }
 
-  private _calculatePosition(overlayWrapper: Element):void {
+  private _calculatePosition(panel: HTMLElement):void {
     // get overlay rect
-    (overlayWrapper as HTMLElement).style.display = 'flex';
-    const rect = overlayWrapper.getBoundingClientRect();
     const originRect = this._getOriginRect();
 
     // calculate the origin point
     const originPoint = this._getOriginPoint(originRect, this._positionPair);
 
     // calculate the overlay anchor point
-    const point = this._getOverlayPoint(originPoint, this._positionPair, rect);
-
+    const point = this._getOverlayPoint(originPoint, this._positionPair, panel.getBoundingClientRect());
     // set the current position style's value.
     // the current position style is a 'ref'.
-    this.positionedStyle.value = {
-      position: 'absolute',
-      left: coerceCssPixelValue(point.x),
-      top: coerceCssPixelValue(point.y),
-      width: coerceCssPixelValue(rect.width),
-      height: coerceCssPixelValue(rect.height),
-    };
+    const style = this.positionedStyle.value;
+    style.position = 'absolute';
+    style.left = coerceCssPixelValue(point.x);
+    style.top = coerceCssPixelValue(point.y);
+    style.minWidth = coerceCssPixelValue(this.width);
+    style.minHeight = coerceCssPixelValue(this.height);
+
+    this.positionedStyle.value = style;
 
     // at last, we need to caculate the position when
     // scrolling.
-    this.caculateScroll(this.positionedStyle, point);
+    this._caculateScroll(this.positionedStyle, point);
   }
 
-  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair, overlayRect: DOMRect): Point {
+  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair, rect: DOMRect): Point {
     let x: number;
+    const {width, height} = rect;
     if (position.overlayX == 'center') {
-      x = originPoint.x - overlayRect.width / 2;
+      x = originPoint.x - width / 2;
     } else {
-      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - overlayRect.width);
+      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - width);
     }
 
     let y: number;
     if (position.overlayY == 'center') {
-      y = originPoint.y - (overlayRect.height / 2);
+      y = originPoint.y - (height / 2);
     } else {
-      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - overlayRect.height);
+      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - height);
     }
 
     return { x, y };
@@ -189,7 +191,6 @@ export class FlexiblePositionStrategy extends PositionStrategy {
   /** Returns the ClientRect of the current origin. */
   private _getOriginRect(): ClientRect {
     const origin = this._origin;
-
     // Check for Element so SVG elements are also supported.
     if (origin instanceof Element) {
       return origin.getBoundingClientRect();
@@ -224,7 +225,7 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     };
   }
 
-  caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
+  private _caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
     let offsetX = window.pageXOffset;
     let offsetY = window.pageYOffset;
     this.subscribe = () => {

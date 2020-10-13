@@ -7,7 +7,7 @@ export interface TreeData {
   children: TreeData[];
 }
 
-const TreeNode = defineComponent({
+export const CdkTreeNode = defineComponent({
   name: "cdk-tree-node",
   props: {
     index: {
@@ -33,11 +33,9 @@ const TreeNode = defineComponent({
         <div>{currentNode.label}</div>
         <div>{currentNode.content}</div>
         {currentNode.children?.map?.((_, key) => (
-          <TreeNode key={key} index={key} />
+          <CdkTreeNode key={key} index={key} />
         ))}
       </div>
     );
   },
 });
-
-export default TreeNode;

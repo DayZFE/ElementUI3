@@ -1,5 +1,5 @@
 import { defineComponent, provide } from "vue";
-import TreeNode, { TreeData } from "./TreeNode";
+import { CdkTreeNode } from "./tree-node";
 
 export default defineComponent({
   name: "cdk-tree-node-spec",
@@ -30,7 +30,7 @@ export default defineComponent({
     return () => (
       <>
         {testData.map((_, key) => (
-          <TreeNode key={key} index={key} />
+          <CdkTreeNode key={key} index={key} />
         ))}
       </>
     );

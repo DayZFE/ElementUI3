@@ -11,7 +11,7 @@ const App = defineComponent({
 
     const popoverProps = {
       content: '这是一段内容,这是一段内容,这是一段内容,这是一段内容。',
-      placement: "top" as 'top-start',
+      placement: "right" as 'top-start',
       title: "标题",
       width: 100,
       trigger: "click" as "hover",

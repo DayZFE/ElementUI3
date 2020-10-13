@@ -8,17 +8,14 @@ import {
   CSSProperties,
   onUnmounted,
   watchEffect,
-  Transition, 
-  Ref, 
-  computed, 
+  Transition,
+  Ref,
+  computed,
   inject,
-  VNode,
-  provide
+  provide, nextTick
 } from "vue";
-import { GlobalPositionStrategy } from './position/global_position_strategy';
 import { PositionStrategy } from './position/position_strategy';
 import './overlay.scss';
-import { method } from 'lodash-es';
 
 class OverlayProvider {
   div?: Element | null;
@@ -85,6 +82,7 @@ export const Overlay = defineComponent({
   },
   setup(props, ctx) {
     inject('cdk-overlay-provider', overlayProvider);
+    
     const strategy = inject('cdk-overlay-strategy', new PositionStrategy());
 
     const state = reactive<{
@@ -123,14 +121,18 @@ export const Overlay = defineComponent({
       state.containerStyle = overlayProps!.containerStyle;
       watch(overlayProps.positionedStyle, (value) => {
         state.positionedStyle = value;
-        console.log(value);
-      }, {immediate: true, deep: true});
+      },{immediate: true});
+
+      nextTick(() => {
+        strategy.apply?.(state.overlayElement!);
+      });
 
       watch(() => props.visible, (value) => {
-        if(value) {
-          setTimeout(() => {
+        if (value) {
+          nextTick(() => {
+            console.log(state.overlayElement?.getBoundingClientRect());
             strategy.apply?.(state.overlayElement!);
-          }, 0);
+          });
         } else {
           strategy.disapply?.();
         }
@@ -167,7 +169,7 @@ export const Overlay = defineComponent({
                 style={state.positionedStyle}
                 onClick={event => event.cancelBubble = true}
               >
-                { renderSlot(ctx.slots, 'default')}
+                {renderSlot(ctx.slots, 'default')}
               </div>
             </div>
           </div>

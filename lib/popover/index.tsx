@@ -1,26 +1,28 @@
-import { defineComponent, ref, inject, renderSlot, onMounted, watchEffect, onUnmounted, computed, watch, CSSProperties, Transition, toRef, reactive } from 'vue';
+import { defineComponent, ref, renderSlot, watchEffect, computed, watch, Transition, } from 'vue';
 import { ConnectionPosition, FlexiblePositionStrategy, Overlay, provideStrategy } from '../cdk';
 import '../theme-chalk/src/popper.scss';
 
 const positionMap: { [key in string]: ConnectionPosition } = {
   'top': { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
-  'top-start': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
-  'top-end': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
-  'bottom': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
-  'bottom-start': { originX: 'left', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
+  'top-start': { originX: 'left', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
+  'top-end': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
+  'bottom': { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
+  'bottom-start': { originX: 'left', originY: 'bottom', overlayX: 'left', overlayY: 'top' },
   'bottom-end': { originX: 'right', originY: 'bottom', overlayX: 'right', overlayY: 'top' },
-  'left': { originX: 'center', originY: 'top', overlayX: 'left', overlayY: 'center' },
-  'left-start': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'top' },
-  'left-end': { originX: 'right', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
-  'right': { originX: 'center', originY: 'top', overlayX: 'right', overlayY: 'center' },
-  'right-start': { originX: 'left', originY: 'top', overlayX: 'right', overlayY: 'top' },
-  'right-end': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
+  'left': { originX: 'left', originY: 'center', overlayX: 'right', overlayY: 'center' },
+  'left-start': { originX: 'left', originY: 'top', overlayX: 'right', overlayY: 'top' },
+  'left-end': { originX: 'left', originY: 'bottom', overlayX: 'right', overlayY: 'bottom' },
+  'right': { originX: 'right', originY: 'center', overlayX: 'left', overlayY: 'center' },
+  'right-start': { originX: 'right', originY: 'top', overlayX: 'left', overlayY: 'top' },
+  'right-end': { originX: 'right', originY: 'bottom', overlayX: 'left', overlayY: 'bottom' },
 }
 
 
 type Placement = 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end';
 
 type ArrowPlacement = 'top' | 'left' | 'bottom' | 'right';
+type ArrowAlignment = 'start' | 'center' | 'end';
+
 
 type TriggerType = 'click' | 'focus' | 'hover' | 'manual';
 
@@ -67,16 +69,20 @@ export default defineComponent({
   },
   setup(props) {
     const visible = ref(false);
-    const bindingElement = ref<Element>();
+    const targetElement = ref<Element>();
 
-    const state = computed(() => {
-      return {
-        position: positionMap[props.placement],
-        arrowStyle: {} as CSSProperties,
-        arrowPlacement: (props.placement.match(/(top|left|bottom|right)/)?.[0] || 'top') as ArrowPlacement,
-      };
-    });
+    const strategy = new FlexiblePositionStrategy(targetElement, window);
+    provideStrategy(strategy);
+    watch(
+      () => props.placement,
+      (value) => {
+        strategy.positionPair(positionMap[value]);
+      },
+      { immediate: true }
+    );
 
+    const arrowPlacement = computed(() => (props.placement.match(/(top|left|bottom|right)/)?.[0] || 'top') as ArrowPlacement);
+    const arrowAlignment = computed(() => (props.placement.match(/(start|end)/)?.[0] || 'center') as ArrowAlignment);
     const popoverClass = computed(() => {
       const clazz = ['el-popover', 'el-popper'];
       if (props.popperClass) {
@@ -88,13 +94,13 @@ export default defineComponent({
       return clazz;
     });
 
-    provideStrategy( new FlexiblePositionStrategy(bindingElement, window).positionPair(state.value.position));
-    
+    const airaHidden = computed(() => (props.disabled || !props.showPopper) ? 'true' : 'false');
+
     watchEffect((onInvalidate) => {
       const fns: (() => void)[] = [];
-      const target = bindingElement.value;
+      const target = targetElement.value;
       if (!target) {
-        return [];
+        return;
       }
       if (props.trigger === 'click') {
         fns.push(addEvent(target, 'click', (event) => {
@@ -121,36 +127,37 @@ export default defineComponent({
 
     return {
       visible,
-      bindingElement,
+      targetElement,
       popoverClass,
-      arrowPlacement: state.value.arrowPlacement,
-      arrowStyle: state.value.arrowStyle,
-      position: state.value.position,
+      airaHidden,
+      arrowPlacement,
+      arrowAlignment,
     }
   },
   render() {
-    const { $props: props, $slots: slots, arrowStyle, arrowPlacement, position, popoverClass } = this;
-    const hidden = (props.disabled || !props.showPopper) ? 'true' : 'false';
+    const { $props: props, $slots: slots, arrowAlignment, arrowPlacement, popoverClass, airaHidden } = this;
+
     return (
       <>
-        <div ref={(ref) => this.bindingElement = (ref as Element).children[0] || ref}>
+        <div ref={(ref) => this.targetElement = (ref as Element).children[0] || ref}>
           {renderSlot(slots, 'default')}
         </div>
         <Overlay
           v-model={[this.visible, 'visible']}
           backgroundClass={'el-popover__background'}
         >
-          <Transition name="el-dialog-fade">
+          <Transition name="fade-in-linear">
             <div
               v-show={this.visible}
               class={popoverClass}
               style={{ width: `${props.width}px` }}
-              aria-hidden={hidden}
+              aria-hidden={airaHidden}
               x-placement={arrowPlacement}
+              x-alignment={arrowAlignment}
             >
               <div class="el-popover__title">{props.title}</div>
               {slots.content ? renderSlot(slots, 'content', { content: props.content }) : (<div>{props.content}</div>)}
-              <div x-arrow class="popper__arrow" style={arrowStyle}></div>
+              <div x-arrow class="popper__arrow"></div>
             </div>
           </Transition>
         </Overlay>

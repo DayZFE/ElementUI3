@@ -4,7 +4,7 @@ import { getElement, addEvent, isValidElement } from '../cdk/utils';
 import { cloneVNode, ComponentPublicInstance, computed, defineComponent, onUnmounted, ref, renderSlot, VNode, watch, Transition } from 'vue';
 import { TriggerType, Placement, ArrowPlacement, TOOLTIPS_POSITION_MAP } from './types';
 
-let tooltipsId = 0;
+let tooltipId = 0;
 
 export const Tooltips = defineComponent({
   props: {
@@ -43,6 +43,14 @@ export const Tooltips = defineComponent({
     tabindex: {
       type: Number,
       default: 0
+    },
+    effect: {
+      type: String as () => 'dark' | 'light',
+      default: 'dark'
+    },
+    transition: {
+      type: String,
+      default: 'el-fade-in-linear',
     },
     popperClass: String,
   },
@@ -124,7 +132,7 @@ export const Tooltips = defineComponent({
       const close = () => { visible.value = false; }
 
       reference.classList.add('el-popover__reference');
-      reference.setAttribute('aria-describedby', `el-popover-${tooltipsId++}`);
+      reference.setAttribute('aria-describedby', `el-popover-${tooltipId++}`);
       // set tab sequence
       reference.setAttribute('tabindex', `${props.tabindex}`);
       popper.setAttribute('tabindex', '0');
@@ -180,14 +188,14 @@ export const Tooltips = defineComponent({
   },
 
   render() {
-    const { 
-      $slots: slots, 
-      arrowStyle, 
-      arrowPlacement, 
-      popoverClass, 
-      airaHidden, 
-      title, 
-      content, 
+    const {
+      $slots: slots,
+      arrowStyle,
+      arrowPlacement,
+      popoverClass,
+      airaHidden,
+      title,
+      content,
       width,
       showArrow,
     } = this;
@@ -206,18 +214,21 @@ export const Tooltips = defineComponent({
           v-model={[this.visible, 'visible']}
           hasBackdrop={false}
         >
-          <Transition name="fade-in-linear">
+          <Transition
+            name={this.transition}
+          >
             <div
-              v-show={this.visible}
-              class={popoverClass}
-              style={{ width: `${width}px` }}
-              aria-hidden={airaHidden}
-              x-placement={arrowPlacement}
-              ref="popover"
-            >
-              <div class="el-popover__title">{title}</div>
-              {slots.content ? renderSlot(slots, 'content', { content }) : (<div>{content}</div>)}
-              <div x-arrow={showArrow} class="popper__arrow" style={arrowStyle}></div>
+              // onMouseleave={() => { this.setExpectedState(false); this.debounceClose(); }}
+              // onMouseenter={() => { this.setExpectedState(true); }}
+              ref="popper"
+              role="tooltip"
+              id={`el-tooltip-${tooltipId++}`}
+              aria-hidden={this.disabled ? 'true' : 'false'}
+              v-show={!this.disabled}
+              class={
+                ['el-tooltip__popper', 'is-' + this.effect, this.popperClass]
+              }>
+              {renderSlot(this.$slots, 'content') || this.content}
             </div>
           </Transition>
         </Overlay>

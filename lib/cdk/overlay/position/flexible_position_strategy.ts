@@ -129,21 +129,22 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     // calculate the origin point
     const originPoint = this._getOriginPoint(originRect, this._positionPair);
 
+    const rect = panel.getBoundingClientRect();
     // calculate the overlay anchor point
-    const point = this._getOverlayPoint(originPoint, this._positionPair, panel.getBoundingClientRect());
+    const point = this._getOverlayPoint(originPoint, this._positionPair, rect);
     // set the current position style's value.
     // the current position style is a 'ref'.
     const style = this.positionedStyle.value;
     style.position = 'absolute';
     style.left = coerceCssPixelValue(point.x);
     style.top = coerceCssPixelValue(point.y);
-    style.minWidth = coerceCssPixelValue(this.width);
-    style.minHeight = coerceCssPixelValue(this.height);
+    style.minWidth = coerceCssPixelValue(rect.width);
+    style.minHeight = coerceCssPixelValue(rect.height);
 
     this.positionedStyle.value = style;
 
-    // at last, we need to caculate the position when
-    // scrolling.
+    // at last, we need to caculate the position
+    // when scrolling.
     this._caculateScroll(this.positionedStyle, point);
   }
 

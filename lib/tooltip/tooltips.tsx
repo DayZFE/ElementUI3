@@ -148,7 +148,6 @@ export const Tooltips = defineComponent({
         }
         fns.push(addEvent(reference, 'focusin', show));
         fns.push(addEvent(reference, 'focusout', close));
-
       } else if (props.trigger === 'hover') {
         fns.push(addEvent(reference, 'mouseenter', show));
         fns.push(addEvent(reference, 'mouseleave', close));

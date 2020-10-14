@@ -1,8 +1,8 @@
-import { ConnectionPosition, FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk';
-import { defineComponent, ref, watch, computed, renderSlot, Transition, onUnmounted, VNode, cloneVNode, ComponentInternalInstance, ComponentPublicInstance, Ref, readonly } from 'vue';
-import '../theme-chalk/src/popper.scss';
+import { defineComponent, ref, watch, computed, renderSlot, Transition, onUnmounted, VNode, cloneVNode, ComponentPublicInstance } from 'vue';
+import { ConnectionPosition, FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk/overlay';
 import { ESCAPE } from '../cdk/keycodes';
 import { addEvent, getElement, isValidElement } from '../cdk/utils';
+import '../theme-chalk/src/popover.scss';
 
 const positionMap: { [key in string]: ConnectionPosition } = {
   'top': { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
@@ -55,6 +55,10 @@ export const Popover = defineComponent({
       type: String as () => Placement,
       default: 'top',
     },
+    showArrow: {
+      type: Boolean,
+      default: true,
+    },
     arrowOffset: {
       type: Number,
       default: 8,
@@ -82,7 +86,7 @@ export const Popover = defineComponent({
 
 
     const popoverClass = computed(() => {
-      const clazz = ['el-popover'];
+      const clazz = ['el-popover', 'el-popper'];
       if (props.popperClass) {
         clazz.push(props.popperClass);
       }
@@ -192,7 +196,16 @@ export const Popover = defineComponent({
   },
 
   render() {
-    const { $props: props, $slots: slots, arrowStyle, arrowPlacement, popoverClass, airaHidden } = this;
+    const {
+      $slots: slots,
+      title,
+      width,
+      content,
+      arrowStyle,
+      arrowPlacement,
+      popoverClass,
+      airaHidden
+    } = this;
     let slotNode: VNode | VNode[] | undefined = slots.default?.();
     if (slotNode) {
       slotNode = slotNode.length === 1 ? slotNode[0] : slotNode;
@@ -209,15 +222,15 @@ export const Popover = defineComponent({
         >
           <Transition name="fade-in-linear">
             <div
+              ref="popover"
               v-show={this.visible}
               class={popoverClass}
-              style={{ width: `${props.width}px` }}
+              style={{ width: `${width}px` }}
               aria-hidden={airaHidden}
               x-placement={arrowPlacement}
-              ref="popover"
             >
-              <div class="el-popover__title">{props.title}</div>
-              {slots.content ? renderSlot(slots, 'content', { content: props.content }) : (<div>{props.content}</div>)}
+              <div class="el-popover__title">{title}</div>
+              {slots.content ? renderSlot(slots, 'content', { content }) : (<div>{content}</div>)}
               <div x-arrow class="popper__arrow" style={arrowStyle}></div>
             </div>
           </Transition>

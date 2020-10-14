@@ -13,10 +13,10 @@ const App = defineComponent({
     const visible = ref(false);
     const popoverProps = {
       content: '这是一段内容,这是一段内容,这是一段内容,这是一段内容。',
-      placement: "right",
-      title: "标题",
-      width: 100,
-      trigger: "focus",
+      placement: 'top',
+      title: '标题',
+      width: 400,
+      trigger: "click",
     } as const;
 
     return function (this: ComponentPublicInstance) {

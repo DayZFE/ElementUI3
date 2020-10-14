@@ -164,6 +164,7 @@ export const Overlay = defineComponent({
             >
               <div
                 ref={(ref) => state.overlayElement = ref as HTMLElement}
+                class="cdk-overlay"
                 style={state.positionedStyle}
                 onClick={event => event.cancelBubble = true}
               >

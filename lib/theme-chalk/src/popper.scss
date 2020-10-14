@@ -28,7 +28,6 @@
 
   &[x-placement^="top"] .popper__arrow {
     bottom: -$--popover-arrow-size;
-    left: 50%;
     margin-right: #{$--tooltip-arrow-size / 2};
     border-top-color: $--popover-border-color;
     border-bottom-width: 0;
@@ -47,7 +46,6 @@
 
   &[x-placement^="bottom"] .popper__arrow {
     top: -$--popover-arrow-size;
-    left: 50%;
     margin-right: #{$--tooltip-arrow-size / 2};
     border-top-width: 0;
     border-bottom-color: $--popover-border-color;
@@ -64,22 +62,12 @@
     margin-left: #{$--popover-arrow-size + 6};
   }
 
-  &[x-placement^="right"] &[x-alignment^="start"] {
-
-  }
-
-
-  &[x-placement^="right"] &[x-alignment^="end"] {
-    
-  }
-
   &[x-placement^="right"] &[x-alignment^="center"] {
     transform: translateY(-50%);
   }
 
 
   &[x-placement^="right"] .popper__arrow {
-    top: 50%;
     left: $--popover-arrow-size;
     margin-bottom: #{$--tooltip-arrow-size / 2};
     border-right-color: $--popover-border-color;
@@ -97,22 +85,8 @@
     margin-right: #{$--popover-arrow-size + 6};
   }
 
-  
-  &[x-placement^="left"] &[x-alignment^="start"] {
-
-  }
-
-
-  &[x-placement^="left"] &[x-alignment^="end"] {
-    
-  }
-
-  &[x-placement^="left"] &[x-alignment^="center"] {
-    transform: translateY(-50%);
-  }
 
   &[x-placement^="left"] .popper__arrow {
-    top: 50%;
     right: $--popover-arrow-size;
     margin-bottom: #{$--tooltip-arrow-size / 2};
     border-right-width: 0;

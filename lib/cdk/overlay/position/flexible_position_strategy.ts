@@ -1,14 +1,15 @@
+import { CSSProperties, isRef, ref, Ref, ComponentPublicInstance } from 'vue';
 import { ConnectionPosition, ConnectionPositionPair, HorizontalConnectionPos, VerticalConnectionPos } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { CSSProperties, isRef, ref, Ref, watch } from 'vue';
 import { OverlayProps } from '../overlay';
+import { getElement } from '../../utils';
 interface Point {
   x: number;
   y: number;
 }
 
-export type FlexiblePositionStrategyOrigin = Element | Ref<Element | undefined> | (Point & {
+export type FlexiblePositionStrategyOrigin = Element | Ref<ComponentPublicInstance | Element | undefined | null> | (Point & {
   width?: number;
   height?: number;
 });
@@ -34,7 +35,7 @@ export class FlexiblePositionStrategy extends PositionStrategy {
 
   private isVisible = false;
 
-  private positionedStyle = ref<CSSProperties>({position: 'static'});
+  private positionedStyle = ref<CSSProperties>({ position: 'static' });
 
   private height = 100;
   private width = 100;
@@ -44,8 +45,8 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     private window: Window,
   ) {
     super();
-   }
-   
+  }
+
   setup(): OverlayProps {
     return {
       positionedStyle: this.positionedStyle,
@@ -121,7 +122,7 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     return this;
   }
 
-  private _calculatePosition(panel: HTMLElement):void {
+  private _calculatePosition(panel: HTMLElement): void {
     // get overlay rect
     const originRect = this._getOriginRect();
 
@@ -148,7 +149,7 @@ export class FlexiblePositionStrategy extends PositionStrategy {
 
   private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair, rect: DOMRect): Point {
     let x: number;
-    const {width, height} = rect;
+    const { width, height } = rect;
     if (position.overlayX == 'center') {
       x = originPoint.x - width / 2;
     } else {
@@ -197,8 +198,9 @@ export class FlexiblePositionStrategy extends PositionStrategy {
     }
 
     if (isRef(origin)) {
-      if (origin.value instanceof Element) {
-        return origin.value.getBoundingClientRect();
+      const element = getElement(origin.value);
+      if (element) {
+        return element.getBoundingClientRect();
       } else {
         return {
           top: 0,

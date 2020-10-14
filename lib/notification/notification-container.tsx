@@ -22,8 +22,6 @@ export default (
 
     const visible = computed(() => datas.value.length > 0);
 
-    watch(datas.value, value => console.log(value));
-
     const createNotifications = (position: NotificationPosition) => {
       const _datas = datas.value; 
       const tag = positionClassTag[position];

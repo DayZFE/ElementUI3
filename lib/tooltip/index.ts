@@ -1,5 +1,2 @@
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    
-});
+export * from './tooltips';
+export * from './use-tooltips';

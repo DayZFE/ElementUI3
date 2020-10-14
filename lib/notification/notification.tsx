@@ -1,29 +1,7 @@
-import { computed, defineComponent, onMounted, ref, renderSlot, Transition, watch } from 'vue';
+import { computed, defineComponent, onMounted, ref, renderSlot, Transition } from 'vue';
 import { notificationProps } from './types';
+import { CdkTimer } from '../cdk/utils';
 
-
-class Timer {
-  private timerId?: number;
-
-  constructor(
-    private readonly fn: () => void,
-    private readonly duration: number,
-  ) { }
-
-  start() {
-    if (this.timerId) {
-      clearTimeout(this.timerId);
-    }
-    this.timerId = setTimeout(this.fn, this.duration);
-
-    return this;
-  }
-
-  end() {
-    clearTimeout(this.timerId);
-    return this;
-  }
-}
 
 const typeMap = {
   success: 'success',
@@ -53,7 +31,7 @@ export const Notification = defineComponent({
       visible.value = true;
     });
 
-    const timer = duration > 0 ? new Timer(() => close(), duration).start() : undefined;
+    const timer = duration > 0 ? new CdkTimer(() => close(), duration).start() : undefined;
 
 
     const click = () => {

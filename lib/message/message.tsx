@@ -1,27 +1,7 @@
-import { coerceCssPixelValue } from '../cdk/coercion';
 import { computed, defineComponent, onMounted, onUnmounted, ref, renderSlot, Transition } from "vue";
+import { CdkTimer } from '../cdk/utils';
 import '../theme-chalk/src/message.scss';
 
-class Timer {
-  private timerId?: number;
-
-  constructor(
-    private readonly fn: () => void,
-    private readonly duration: number,
-  ) { }
-
-  start() {
-    if (this.timerId) {
-      clearTimeout(this.timerId);
-    }
-    this.timerId = setTimeout(this.fn, this.duration);
-  }
-
-  end() {
-    clearTimeout(this.timerId);
-    this.timerId = undefined;
-  }
-}
 
 export const Message = defineComponent({
   props: {
@@ -54,7 +34,7 @@ export const Message = defineComponent({
   setup(props, ctx) {
     const visible = ref(true);
 
-    const timer = new Timer(() => {
+    const timer = new CdkTimer(() => {
       visible.value = false;
       setTimeout(() => {
         props.onDestroy?.(props.id);

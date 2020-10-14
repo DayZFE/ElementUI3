@@ -130,14 +130,12 @@ export const Overlay = defineComponent({
       watch(() => props.visible, (value) => {
         if (value) {
           nextTick(() => {
-            console.log(state.overlayElement?.getBoundingClientRect());
             strategy.apply?.(state.overlayElement!);
           });
         } else {
           strategy.disapply?.();
         }
       });
-      // state.overlayElement?.parentNode?.removeChild(state.overlayElement);
     });
 
     onUnmounted(() => {

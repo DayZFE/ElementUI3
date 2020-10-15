@@ -40,6 +40,7 @@ export class MessageServiceImpl extends MessageService {
   }
 
   protected create(data: MessageData) {
+    console.trace();
     const messageData = {
       type: data.type || 'info',
       iconClass: data.iconClass ?? '',

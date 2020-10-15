@@ -8,7 +8,7 @@ export type TriggerType = 'click' | 'focus' | 'hover';
 
 export const OVERLAY_POSITION_MAP: { [key in string]: ConnectionPosition } = {
   'top': { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
-  'top-start': { originX: 'left', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
+  'top-start': { originX: 'left', originY: 'top', overlayX: 'left', overlayY: 'bottom' },
   'top-end': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },
   'bottom': { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
   'bottom-start': { originX: 'left', originY: 'bottom', overlayX: 'left', overlayY: 'top' },

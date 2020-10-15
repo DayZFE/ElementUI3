@@ -1,7 +1,8 @@
+import {computed, watch, onUnmounted, ref, shallowReactive } from "vue";
+import { Placement, TriggerType, ArrowPlacement, OVERLAY_POSITION_MAP } from './types';
 import { ESCAPE } from "../cdk/keycodes";
 import { addEvent } from "../cdk/utils";
-import {computed, watch, onUnmounted, ref, shallowReactive } from "vue";
-import { Placement, TriggerType, ArrowPlacement } from './types';
+import { FlexiblePositionStrategy, provideStrategy } from '../cdk/overlay';
 
 
 interface TooltipProps {
@@ -16,11 +17,22 @@ let tooltipCounter = 0;
 
 export const useTooltip = (
   props: TooltipProps,
-  trigger: TriggerType = 'click',
+  trigger: TriggerType = 'hover',
 ) => {
   const visible = ref(false);
   const referenceRef = ref<HTMLElement | null>(null);
   const popperRef = ref<HTMLElement | null>(null);
+
+  const strategy = new FlexiblePositionStrategy(referenceRef, window);
+  watch(
+    () => props.placement,
+    (value) => {
+      strategy.positionPair(OVERLAY_POSITION_MAP[value]);
+    },
+    { immediate: true }
+  );
+  provideStrategy(strategy);
+  
 
   const tooltipId = `el-tooltip-${tooltipCounter++}`;
 
@@ -58,7 +70,6 @@ export const useTooltip = (
   const destroyFns: (() => void)[] = [];
 
   watch(() => [referenceRef.value, popperRef.value], (values) => {
-    console.log(values);
     const reference = values[0];
     const popper = values[1];
     if (!(reference && popper)) {
@@ -106,7 +117,7 @@ export const useTooltip = (
     destroyFns.forEach(value => value());
   });
 
-  return shallowReactive({
+  return {
     visible,
     airaHidden,
     arrowStyle,
@@ -114,5 +125,5 @@ export const useTooltip = (
     tooltipId,
     reference: referenceRef,
     popper: popperRef,
-  });
+  };
 }

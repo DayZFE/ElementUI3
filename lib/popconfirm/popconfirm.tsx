@@ -1,13 +1,22 @@
 import { Popover } from '../popover';
-import { defineComponent } from 'vue';
-import { default as Button, ElButtonType } from '../button';
+import { defineComponent, ref } from 'vue';
+import { Button, ElButtonType } from '../button';
+import "../theme-chalk/src/popconfirm.scss";
+import { Placement } from '@/tooltip';
 
 export const Popconfirm = defineComponent({
   props: {
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
     icon: String,
     hideIcon: Boolean,
     title: String,
-
+    iconColor: {
+      type: String,
+      default: 'white',
+    },
     cancelButtonType: {
       type: String as () => ElButtonType,
       default: 'default',
@@ -22,34 +31,49 @@ export const Popconfirm = defineComponent({
     },
     confirmButtonText: {
       type: String,
-      default: 'confirm',      
-    }
+      default: 'confirm',
+    },
+    placement: {
+      type: String as () => Placement,
+      default: 'top-start'
+    },
+    confirm: Function,
+    cancel: Function,
   },
-  setup() {
-    
+  setup(props, ctx) {
+    const visible = ref(false);
+
     const cancel = () => {
+      visible.value = false;
+      ctx.emit('update:modelValue', false);
+      props.cancel?.();
 
     }
     const confirm = () => {
-
+      visible.value = false;
+      ctx.emit('update:modelValue', false);
+      props.confirm?.();
     }
     return {
       eltype: 'popconfirm',
       cancel,
-      confirm
+      confirm,
+      visible,
     }
   },
   render() {
-    const { 
-      icon, 
-      hideIcon, 
-      title, 
-      cancelButtonText, 
+    const {
+      icon,
+      hideIcon,
+      title,
+      cancelButtonText,
       cancelButtonType,
       cancel,
-      confirmButtonText, 
+      confirmButtonText,
       confirmButtonType,
       confirm,
+      iconColor,
+      placement,
     } = this;
 
     const slots = {
@@ -60,7 +84,7 @@ export const Popconfirm = defineComponent({
             <i
               v-show={!hideIcon}
               class={["el-popconfirm__icon", icon]}
-              style="{color: iconColor}"
+              style={{ color: iconColor }}
             ></i>
             {title}
           </p>
@@ -77,11 +101,19 @@ export const Popconfirm = defineComponent({
               type={confirmButtonType}
               onClick={confirm}
             >
-              {{ confirmButtonText }}
+              {confirmButtonText}
             </Button>
           </div>
-        </div >)
+        </div>
+      )
     }
-    return (<Popover v-slots={slots} />);
+    return (<Popover 
+      v-model={this.visible} 
+      ref="popover" 
+      v-slots={slots} 
+      trigger="click" 
+      title={title} 
+      placement={placement} 
+    />);
   }
 });

@@ -2,6 +2,7 @@
 @import "common/var";
 
 @include b(message-container) {
+  position: fixed;
   min-width: 100vw;
   min-height: 0;
   display: flex;

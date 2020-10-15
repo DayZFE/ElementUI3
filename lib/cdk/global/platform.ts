@@ -22,7 +22,7 @@ export default class Platform {
    * @memberof Platform
    */
   readonly BODY = this.BROWSER
-    ? document.body || document.documentElement || null
+    ? document.documentElement || document.body || null
     : null;
 
   readonly TOP = this.BROWSER ? window : null;

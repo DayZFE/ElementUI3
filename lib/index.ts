@@ -1,7 +1,24 @@
 export * from './ele-ui-provider';
 export { default as Alert } from "./alert";
 export { default as Avatar } from "./avatar";
+export { Button, ButtonGroup } from "./button";
+
+export { default as Backtop } from "./backtop";
+export { default as Badge } from "./badge";
+export { Breadcrumb, BreadcrumbItem } from "./breadcrumb";
+export { default as Calendar } from "./calendar";
 export { default as Dialog } from './dialog';
-export { default as Button } from './button';
 export { Popover, vPopover } from './popover';
 export { Tooltip, vTooltip } from './tooltip';
+export { Popconfirm, vPopconfirm } from './popconfirm';
+
+export {
+  default as globalInject,
+  platformToken,
+  breakpointToken,
+  bidirectionToken,
+  clipboardToken,
+  // viewportToken,
+} from "./cdk/global";
+export * from "./cdk/tools";
+export * from "./cdk";

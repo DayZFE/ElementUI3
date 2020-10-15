@@ -48,7 +48,7 @@ export default defineComponent({
     );
 
     return () => (
-      <Transition name='el-alert-fade'>
+      <Transition name='el-alert-fade' appear={true}>
         <div
           class={[
             "el-alert",

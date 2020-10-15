@@ -1,13 +1,15 @@
-import { defineComponent, ref, watch, computed, renderSlot, Transition, VNode, cloneVNode } from 'vue';
-import { FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk/overlay';
+import { defineComponent, ref, watch, computed, renderSlot, Transition, VNode, cloneVNode, unref } from 'vue';
+import { Overlay } from '../cdk/overlay';
 import { getElement, isValidElement } from '../cdk/utils';
-import { useTooltip } from '../tooltip';
-import '../theme-chalk/src/popover.scss';
-import { OVERLAY_POSITION_MAP, Placement, TriggerType } from '../tooltip';
+import { Placement, TriggerType, useTooltip } from '../tooltip';
 
 export const Popover = defineComponent({
   name: 'el-popover',
   props: {
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -54,18 +56,8 @@ export const Popover = defineComponent({
     },
     popperClass: String,
   },
-  setup(props) {
+  setup(props, ctx) {
     const state = useTooltip(props, props.trigger);
-    const strategy = new FlexiblePositionStrategy(state.reference, window);
-    watch(
-      () => props.placement,
-      (value) => {
-        strategy.positionPair(OVERLAY_POSITION_MAP[value]);
-      },
-      { immediate: true }
-    );
-    provideStrategy(strategy);
-
 
     const popoverClass = computed(() => {
       const clazz = ['el-popover', 'el-popper'];
@@ -76,6 +68,19 @@ export const Popover = defineComponent({
         clazz.push('el-popover--plain');
       }
       return clazz;
+    });
+
+    state.visible.value = props.modelValue;
+    watch(state.visible, (value) => {
+      if (props.modelValue !== value) {
+        ctx.emit('update:modelValue', value);        
+      }
+    });
+
+    watch(() => props.modelValue, (value) => {
+      if (state.visible.value !== value) {
+        state.visible.value = value;
+      }
     });
 
     return {
@@ -94,17 +99,24 @@ export const Popover = defineComponent({
       arrowStyle,
       arrowPlacement,
       popoverClass,
-      airaHidden
+      airaHidden,
+      visible,
+      transition,
     } = this;
+
     let node: VNode | VNode[] | undefined = slots.default?.();
     if (node) {
-      node = node.length === 1 ? node[0] : node;
-      const setReference = (ref: object | null) => { 
-        this.reference = getElement(ref) 
+      // set the reference
+      const setReference = (ref: object | null) => {
+        this.reference = getElement(ref)
       };
+      // get the node
+      node = node.length === 1 ? node[0] : node;
       if (isValidElement(node)) {
+        // create a new node to set the reference
         node = cloneVNode(node as VNode, { ref: setReference }, true);
       } else {
+        // set a wrapper dom for the node.
         node = (<span ref={setReference}>{node}</span>) as VNode;
       }
     }
@@ -112,11 +124,11 @@ export const Popover = defineComponent({
     return (
       <>
         {node}
-        <Overlay v-model={[this.visible, 'visible']} hasBackdrop={false}>
-          <Transition name={this.transition}>
+        <Overlay visible={visible} hasBackdrop={false}>
+          <Transition name={transition}>
             <div
               ref="popper"
-              v-show={this.visible}
+              v-show={visible}
               class={popoverClass}
               style={{ width: `${width}px` }}
               aria-hidden={airaHidden}

@@ -1,7 +1,7 @@
-import { FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk';
+import { cloneVNode, computed, defineComponent, renderSlot, VNode, Transition } from 'vue';
+import { Overlay } from '../cdk';
 import { getElement, isValidElement } from '../cdk/utils';
-import { cloneVNode, computed, defineComponent, ref, renderSlot, VNode, watch, Transition } from 'vue';
-import { Placement, OVERLAY_POSITION_MAP } from './types';
+import { Placement } from './types';
 import { useTooltip } from './use-tooltip';
 
 export const Tooltip = defineComponent({
@@ -46,17 +46,6 @@ export const Tooltip = defineComponent({
   setup(props) {
     const state = useTooltip(props);
 
-    const strategy = new FlexiblePositionStrategy(state.reference, window);
-    provideStrategy(strategy);
-    watch(
-      () => props.placement,
-      (value) => {
-        strategy.positionPair(OVERLAY_POSITION_MAP[value]);
-      },
-      { immediate: true }
-    );
-
-
     const popoverClass = computed(() => {
       const clazz = [props.popperClass];
       if (props.effect) {
@@ -82,6 +71,7 @@ export const Tooltip = defineComponent({
       content,
       tooltipId,
       visibleArrow,
+      visible,
     } = this;
 
 
@@ -105,10 +95,10 @@ export const Tooltip = defineComponent({
     return (
       <>
         {node}
-        <Overlay v-model={[this.visible, 'visible']} hasBackdrop={false}>
+        <Overlay visible={visible} hasBackdrop={false}>
           <Transition name={this.transition}>
             <div
-              v-show={this.visible}
+              v-show={visible}
               ref="popper"
               role="tooltip"
               id={tooltipId}

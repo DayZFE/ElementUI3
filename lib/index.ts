@@ -10,6 +10,7 @@ export { default as Calendar } from "./calendar";
 export { default as Dialog } from './dialog';
 export { Popover, vPopover } from './popover';
 export { Tooltip, vTooltip } from './tooltip';
+export { Tag } from './tag';
 export { Popconfirm, vPopconfirm } from './popconfirm';
 
 export {

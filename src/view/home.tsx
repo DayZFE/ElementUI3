@@ -18,6 +18,7 @@ import {
   $notify,
   vPopconfirm,
   Popconfirm,
+  Tag
 } from "../../lib";
 
 export default defineComponent({
@@ -147,6 +148,17 @@ export default defineComponent({
           <Tooltip ref="tooltip" content="这是一条测试内容！">
             tooltips!!!!
           </Tooltip>
+        </p>
+
+        <p>
+          <Tag size="medium">标签一</Tag>
+          <Tag size="small">标签二</Tag>
+          <Tag size="mini">标签三</Tag>
+          <Tag type="success">标签四</Tag>
+          <Tag type="info">标签五</Tag>
+          <Tag type="danger">标签六</Tag>
+          <Tag type="warning">标签七</Tag>
+
         </p>
 
         {/* notification */}

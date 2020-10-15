@@ -1,5 +1,6 @@
+import { ElSize } from '../types';
 import { computed, defineComponent, inject, renderSlot } from "vue";
-import { ElButtonNativeType, ElButtonSize, ElButtonType } from './types';
+import { ElButtonNativeType, ElButtonType } from './types';
 
 export const ButtonGroup = defineComponent({
   name: "ele-button-group",
@@ -18,7 +19,7 @@ export const Button = defineComponent({
       default: "default",
     },
     size: {
-      type: String as () => ElButtonSize,
+      type: String as () => ElSize,
       default: "medium",
     },
     icon: {

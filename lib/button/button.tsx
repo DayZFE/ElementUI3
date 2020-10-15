@@ -1,18 +1,19 @@
 import { computed, defineComponent, renderSlot } from 'vue';
-
+import { ElButtonType } from './types';
 import '../theme-chalk/src/button.scss';
+
 export default defineComponent({
   props: {
     type: {
-      type: String as () => 'default' | 'primary' | 'success' | 'info' | 'warning' | 'danger',
+      type: String as () => ElButtonType,
       default: 'default'
     },
-    size: String,
-    icon: String,
     nativeType: {
       type: String as () => "button" | "submit" | "reset",
       default: 'button',
     },
+    size: String,
+    icon: String,
     loading: Boolean,
     disabled: Boolean,
     plain: Boolean,

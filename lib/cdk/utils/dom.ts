@@ -6,14 +6,14 @@ export function addEvent<T extends Element | Document, K extends keyof HTMLEleme
 }
 
 export const isValidElement = (element: any) => {
-  return element && element['__v_isVNode'] && typeof element.type !== 'symbol';
+  return element && typeof element === 'object' && element['__v_isVNode'] && typeof element.type !== 'symbol';
 }
 
-export function getElement(element: any): Element | null {
-  if (element instanceof Element) {
+export function getElement(element: any): HTMLElement | null {
+  if (element instanceof HTMLElement) {
     return element;
   }
-  if (element && element.$el instanceof Element) {
+  if (element && element.$el instanceof HTMLElement) {
     return element.$el;
   }
   return null;

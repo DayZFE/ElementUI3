@@ -6,7 +6,7 @@
     outline-width: 0;
   }
   @include e(popper) {
-    position: absolute;
+    // position: absolute;
     border-radius: 4px;
     padding: $--tooltip-padding;
     z-index: $--index-popper;
@@ -39,7 +39,7 @@
     }
 
     &[x-placement^="top"] .popper__arrow {
-      bottom: -$--tooltip-arrow-size;
+      bottom: $--tooltip-arrow-size + 1;
       border-top-color: $--tooltip-border-color;
       border-bottom-width: 0;
 
@@ -56,7 +56,7 @@
     }
 
     &[x-placement^="bottom"] .popper__arrow {
-      top: -$--tooltip-arrow-size;
+      top: $--tooltip-arrow-size + 1;
       border-top-width: 0;
       border-bottom-color: $--tooltip-border-color;
 
@@ -73,7 +73,7 @@
     }
 
     &[x-placement^="right"] .popper__arrow {
-      left: -$--tooltip-arrow-size;
+      left: $--tooltip-arrow-size + 1;
       border-right-color: $--tooltip-border-color;
       border-left-width: 0;
 
@@ -90,7 +90,7 @@
     }
 
     &[x-placement^="left"] .popper__arrow {
-      right: -$--tooltip-arrow-size;
+      right: $--tooltip-arrow-size + 1;
       border-right-width: 0;
       border-left-color: $--tooltip-border-color;
 

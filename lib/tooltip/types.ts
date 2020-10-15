@@ -6,7 +6,7 @@ export type ArrowPlacement = 'top' | 'left' | 'bottom' | 'right';
 
 export type TriggerType = 'click' | 'focus' | 'hover';
 
-export const TOOLTIPS_POSITION_MAP: { [key in string]: ConnectionPosition } = {
+export const OVERLAY_POSITION_MAP: { [key in string]: ConnectionPosition } = {
   'top': { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
   'top-start': { originX: 'left', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
   'top-end': { originX: 'right', originY: 'top', overlayX: 'right', overlayY: 'bottom' },

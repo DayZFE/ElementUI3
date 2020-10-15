@@ -1,11 +1,12 @@
 import { vPopover } from '../lib/popover';
-import { ComponentPublicInstance, defineComponent, inject, ref } from "vue";
-import { $message, EleUIProvider, Dialog, Button, Popover, $notify, Alert, Avatar } from "../lib";
+import { ComponentPublicInstance, defineComponent, inject, onMounted, ref } from "vue";
+import { $message, EleUIProvider, Dialog, Button, Popover, $notify, Alert, Avatar, vTooltip, Tooltip } from "../lib";
 
 const App = defineComponent({
   name: "el-app",
   directives: {
     'popover': vPopover,
+    'tooltip': vTooltip,
   },
   setup(_, ctx) {
     const message = inject($message)!;
@@ -52,11 +53,15 @@ const App = defineComponent({
           </div>
           <div style="position: fixed; top: 50%; left: 50%;">
             <Popover {...popoverProps}>
-              <Button >click popover</Button>
+              <Button ref="button">click popover</Button>
             </Popover>
 
-            <Popover ref="popover" {...popoverProps}/>
+            <Popover ref="popover" {...popoverProps} />
             <Button v-popover="popover"> click popover</Button>
+
+            <Tooltip ref="tooltip" content="这是一条测试内容！">
+              tooltips!!!!
+            </Tooltip>
           </div>
           <div>
             <Button onClick={() => notification.notify({
@@ -84,7 +89,6 @@ const App = defineComponent({
               duration: 0,
               showClose: true
             })}>show notification bl</Button>
-
           </div>
 
           <Dialog title="提示" width="30%" v-model={[visible.value, 'visible']} v-slots={{

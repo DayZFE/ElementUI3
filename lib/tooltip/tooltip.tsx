@@ -1,36 +1,22 @@
-import { defineComponent, ref, watch, computed, renderSlot, Transition, VNode, cloneVNode } from 'vue';
-import { FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk/overlay';
+import { FlexiblePositionStrategy, provideStrategy, Overlay } from '../cdk';
 import { getElement, isValidElement } from '../cdk/utils';
-import { useTooltip } from '../tooltip';
-import '../theme-chalk/src/popover.scss';
-import { OVERLAY_POSITION_MAP, Placement, TriggerType } from '../tooltip';
+import { cloneVNode, computed, defineComponent, ref, renderSlot, VNode, watch, Transition } from 'vue';
+import { Placement, OVERLAY_POSITION_MAP } from './types';
+import { useTooltip } from './use-tooltip';
 
-export const Popover = defineComponent({
-  name: 'el-popover',
+export const Tooltip = defineComponent({
   props: {
     disabled: {
       type: Boolean,
       default: false
     },
-    title: {
-      type: String,
-      default: ''
-    },
     content: {
       type: String,
       default: '',
     },
-    width: {
-      type: Number,
-      default: 150
-    },
     placement: {
       type: String as () => Placement,
       default: 'top',
-    },
-    trigger: {
-      type: String as () => TriggerType,
-      default: 'click',
     },
     visibleArrow: {
       type: Boolean,
@@ -44,19 +30,24 @@ export const Popover = defineComponent({
       type: Number,
       default: 0
     },
-    enterable: {
-      type: Boolean,
-      default: false
+    effect: {
+      type: String as () => 'dark' | 'light' | undefined,
+      default: 'dark'
     },
     transition: {
       type: String,
-      default: 'el-fade-in-linear'
+      default: 'el-fade-in-linear',
     },
-    popperClass: String,
+    popperClass: {
+      type: String,
+      default: 'el-tooltip__popper',
+    },
   },
   setup(props) {
-    const state = useTooltip(props, props.trigger);
+    const state = useTooltip(props);
+
     const strategy = new FlexiblePositionStrategy(state.reference, window);
+    provideStrategy(strategy);
     watch(
       () => props.placement,
       (value) => {
@@ -64,47 +55,49 @@ export const Popover = defineComponent({
       },
       { immediate: true }
     );
-    provideStrategy(strategy);
 
 
     const popoverClass = computed(() => {
-      const clazz = ['el-popover', 'el-popper'];
-      if (props.popperClass) {
-        clazz.push(props.popperClass);
-      }
-      if (props.content) {
-        clazz.push('el-popover--plain');
+      const clazz = [props.popperClass];
+      if (props.effect) {
+        clazz.push(`is-${props.effect}`);
       }
       return clazz;
     });
 
     return {
-      eltype: 'popover',
+      eltype: 'tooltip',
       popoverClass,
-      ...state
+      ...state,
     }
   },
 
   render() {
     const {
       $slots: slots,
-      title,
-      width,
-      content,
       arrowStyle,
       arrowPlacement,
       popoverClass,
-      airaHidden
+      airaHidden,
+      content,
+      tooltipId,
+      visibleArrow,
     } = this;
+
+
     let node: VNode | VNode[] | undefined = slots.default?.();
     if (node) {
-      node = node.length === 1 ? node[0] : node;
-      const setReference = (ref: object | null) => { 
-        this.reference = getElement(ref) 
+      // set the reference
+      const setReference = (ref: object | null) => {
+        this.reference = getElement(ref)
       };
+      // get the node
+      node = node.length === 1 ? node[0] : node;
       if (isValidElement(node)) {
+        // create a new node to set the reference
         node = cloneVNode(node as VNode, { ref: setReference }, true);
       } else {
+        // set a wrapper dom for the node.
         node = (<span ref={setReference}>{node}</span>) as VNode;
       }
     }
@@ -115,16 +108,16 @@ export const Popover = defineComponent({
         <Overlay v-model={[this.visible, 'visible']} hasBackdrop={false}>
           <Transition name={this.transition}>
             <div
-              ref="popper"
               v-show={this.visible}
-              class={popoverClass}
-              style={{ width: `${width}px` }}
+              ref="popper"
+              role="tooltip"
+              id={tooltipId}
               aria-hidden={airaHidden}
+              class={popoverClass}
               x-placement={arrowPlacement}
             >
-              <div class="el-popover__title">{title}</div>
-              {slots.content ? renderSlot(slots, 'content') : (<div>{content}</div>)}
-              <div x-arrow class="popper__arrow" style={arrowStyle}></div>
+              {slots.content ? renderSlot(slots, 'content') : <span>{content}</span>}
+              {visibleArrow ? <div x-arrow class="popper__arrow" style={arrowStyle}></div> : undefined}
             </div>
           </Transition>
         </Overlay>

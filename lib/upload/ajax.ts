@@ -1,78 +1,51 @@
-export class HttpError extends Error {
-  constructor(
-    msg: string,
-    public readonly status: number,
-    public readonly method: string,
-    public readonly url: string
-  ) {
-    super(msg);
-  }
-}
+import { AjaxOptions, HttpError } from './types';
 
-export type AjaxBody = {[x: string]: any} | string | null;
-
-export type AjaxEvent = ProgressEvent | (ProgressEvent & {percent: number});
-
-export type AjaxError = HttpError | AjaxEvent;
-
-export interface AjaxOptions {
-  action: string;
-  headers: {[x: string]: string},
-  data: any;
-  filename: string;
-  file: File;
-  withCredentials: string;
-  onProgress: (e: ProgressEvent & {percent: number}) => void;
-  onSuccess: (body: AjaxBody) => void;
-  onError: (error: AjaxError) => void;
-}
-
-export function upload(option: AjaxOptions) {
+export function upload(options: AjaxOptions) {
   if (typeof XMLHttpRequest === 'undefined') {
     return;
   }
 
   const xhr = new XMLHttpRequest();
-  const action = option.action;
+  const action = options.action;
 
   if (xhr.upload) {
     xhr.upload.onprogress = function progress(e: ProgressEvent) {
       if (e.total > 0) {
         (e as any).percent = e.loaded / e.total * 100;
       }
-      option.onProgress(e as any);
+      options.onProgress(e as any);
     };
   }
 
   const formData = new FormData();
 
-  if (option.data) {
-    Object.keys(option.data).forEach(key => {
-      formData.append(key, option.data[key]);
+  if (options.data) {
+    Object.keys(options.data).forEach(key => {
+      formData.append(key, options.data[key]);
     });
   }
 
-  formData.append(option.filename, option.file, option.file.name);
+  formData.append(options.filename, options.file, options.file.name);
 
   xhr.onerror = function error(e) {
-    option.onError(e);
+    options.onError(e);
   };
 
   xhr.onload = function onload() {
     if (xhr.status < 200 || xhr.status >= 300) {
-      return option.onError(getError(action, option, xhr));
+      return options.onError(getError(action, options, xhr));
     }
 
-    option.onSuccess(getBody(xhr));
+    options.onSuccess(getBody(xhr));
   };
 
   xhr.open('post', action, true);
 
-  if (option.withCredentials && 'withCredentials' in xhr) {
+  if (options.withCredentials && 'withCredentials' in xhr) {
     xhr.withCredentials = true;
   }
 
-  const headers = option.headers || {};
+  const headers = options.headers || {};
 
   for (let item in headers) {
     if (headers.hasOwnProperty(item) && headers[item] !== null) {

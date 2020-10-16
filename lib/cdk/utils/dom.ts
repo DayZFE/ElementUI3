@@ -1,3 +1,5 @@
+import { VNode } from 'vue';
+
 export function addEvent<T extends Element | Document, K extends keyof HTMLElementEventMap>(target: T, type: K, fn: (this: T, event: HTMLElementEventMap[K]) => void) {
   target.addEventListener(type, fn as any);
   return function destroy() {
@@ -18,3 +20,5 @@ export function getElement(element: any): HTMLElement | null {
   }
   return null;
 };
+
+export const renderCondition = (test: boolean, node: VNode | JSX.Element | undefined, elseNode?: VNode | JSX.Element | undefined) => test ? node : elseNode;

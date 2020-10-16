@@ -1,35 +1,41 @@
-import { defineComponent, renderSlot } from 'vue';
+import { defineComponent, ref, renderSlot } from 'vue';
+import { injectService } from './upload.service';
 
 export const UploadDragger = defineComponent({
   name: 'ElUploadDrag',
   props: {
-    disabled: Boolean
+    disabled: Boolean,
+    onFile: Function,
   },
-  inject: {
-    uploader: {
-      default: ''
-    }
-  },
-  data() {
-    return {
-      dragover: false
-    };
-  },
-  methods: {
-    onDragover() {
-      if (!this.disabled) {
-        this.dragover = true;
+
+  setup(props, ctx) {
+    const uploadService = injectService();
+    const dragover = ref(false);
+
+    function onDragover(e: DragEvent) {
+      e.preventDefault();
+      if (!props.disabled) {
+        dragover.value = true;
       }
-    },
-    onDrop(e: DragEvent) {
-      if (this.disabled || !this.uploader) return;
-      const accept = this.uploader.accept;
-      this.dragover = false;
+    }
+
+    function onDragleave(e: DragEvent) {
+      e.preventDefault();
+      dragover.value = false;
+    }
+
+    function onDrop(e: DragEvent) {
+      e.preventDefault();
+      if (props.disabled || !uploadService) return;
+      const accept = uploadService.accept;
+      const files = (e.dataTransfer?.files ?? []) as File[];
+      dragover.value = false;
       if (!accept) {
-        this.$emit('file', e.dataTransfer.files);
+        props.onFile?.(files);
+        // ctx.emit('file', files);
         return;
       }
-      this.$emit('file', [].slice.call(e.dataTransfer.files).filter(file => {
+      const validatedFiles = Array.prototype.slice.call(files).filter((file: File) => {
         const { type, name } = file;
         const extension = name.indexOf('.') > -1
           ? `.${name.split('.').pop()}`
@@ -50,21 +56,19 @@ export const UploadDragger = defineComponent({
             }
             return false;
           });
-      }));
+      });
+      props.onFile?.(validatedFiles);
     }
-  },
-
-  render() {
-    const { $slots: slot } = this;
-    return (
+    return () => (
       <div
         class="el-upload-dragger is-dragover"
-      // drop_prevent={{}}
-      // dragover_prevent={onDragover}
-      // dragleave_prevent={() => dragover = false}
+        onDrop={onDrop}
+        onDragover={onDragover}
+        onDragleave={onDragleave}
       >
-        {renderSlot(slot, 'default')}
+        {renderSlot(ctx.slots, 'default')}
       </div>
     );
+
   }
 });

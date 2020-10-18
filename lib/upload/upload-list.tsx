@@ -2,11 +2,11 @@ import { DELETE } from '../cdk/keycodes';
 import { renderCondition } from '../cdk/utils';
 import { computed, defineComponent, renderSlot, TransitionGroup } from 'vue';
 import { EleUploadType, ElUploadFile } from './types';
-import { ElProgress } from '@/progress';
+import { Progress } from '../progress';
 
 
 export const UploadList = defineComponent({
-  name: 'ElUploadList',
+  name: 'el-upload-list',
   props: {
     files: {
       type: Array as () => ElUploadFile[],
@@ -111,7 +111,7 @@ export const UploadList = defineComponent({
           {renderCondition(!disabled, <i class="el-icon-close-tip">delete</i>)}
           {renderCondition(
             file.status === 'uploading',
-            <ElProgress
+            <Progress
               type={isCard ? 'circle' : 'line'}
               stroke-width={isCard ? 6 : 2}
               percentage={parseInt(file.percentage)}

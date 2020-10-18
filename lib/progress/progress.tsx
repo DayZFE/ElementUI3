@@ -2,7 +2,8 @@ import { renderCondition } from '../cdk/utils';
 import { computed, CSSProperties, defineComponent, Prop } from 'vue';
 import { ElProgressType, ColorFunction, ElProgressStatus, FormatFunction, StringArray } from './types';
 
-export const ElProgress = defineComponent({
+export const Progress = defineComponent({
+  name: 'el-progress',
   props: {
     type: {
       type: String as () => ElProgressType,

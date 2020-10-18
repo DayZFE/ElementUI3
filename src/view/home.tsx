@@ -18,7 +18,9 @@ import {
   $notify,
   vPopconfirm,
   Popconfirm,
-  Tag
+  Tag,
+  Upload,
+  Progress,
 } from "../../lib";
 
 export default defineComponent({
@@ -188,6 +190,19 @@ export default defineComponent({
             duration: 0,
             showClose: true
           })}>show notification bl</Button>
+        </p>
+
+        <p>
+          <div style="width: 20%">
+            <Progress />
+            <Progress percentage={20} />
+
+          </div>
+        </p>
+        <p>
+          <Upload action="" >
+            <Button>测试</Button>
+          </Upload>
         </p>
 
 

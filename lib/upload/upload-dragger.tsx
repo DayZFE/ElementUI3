@@ -2,7 +2,7 @@ import { defineComponent, ref, renderSlot } from 'vue';
 import { injectService } from './upload.service';
 
 export const UploadDragger = defineComponent({
-  name: 'ElUploadDrag',
+  name: 'el-upload-dragger',
   props: {
     disabled: Boolean,
     onFile: Function,

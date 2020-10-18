@@ -1,5 +1,5 @@
-import { ENTER, SPACE } from '@/cdk/keycodes';
-import { renderCondition, thenable, isXHR, Method, Model } from '@/cdk/utils';
+import { ENTER, SPACE } from '../cdk/keycodes';
+import { renderCondition, thenable, isXHR, Method, Model } from '../cdk/utils';
 import { defineComponent, InputHTMLAttributes, reactive, ref, renderSlot } from 'vue';
 import { upload as ajax } from './ajax';
 import { ElUploadFile, AjaxOptions, HttpRequest, RequestMethod, } from './types';
@@ -9,6 +9,7 @@ import { injectService } from './upload.service';
 function noop() { }
 
 export const UploadInput = defineComponent({
+  name: 'el-upload-input',
   props: {
     type: String,
     data: Object,

@@ -10,8 +10,8 @@ function noop() { }
 const isPicture = (listType: EleUploadType) => listType === 'picture-card' || listType === 'picture';
 
 
-export const ElUpload = defineComponent({
-  name: 'ElUpload',
+export const Upload = defineComponent({
+  name: 'el-upload',
   props: {
     data: Object,
     multiple: Boolean,
@@ -247,7 +247,6 @@ export const ElUpload = defineComponent({
       listType,
       onPreview,
       onExceed,
-      beforeUpload,
       withCredentials,
       headers,
       name,
@@ -256,7 +255,9 @@ export const ElUpload = defineComponent({
       autoUpload,
       limit,
       httpRequest,
+      beforeUpload,
     } = this.$props;
+
     const uploadList = renderCondition(
       showFileList,
       <UploadList

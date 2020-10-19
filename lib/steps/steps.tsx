@@ -1,8 +1,7 @@
 import { Enum } from '../cdk/utils';
-import { cloneVNode, defineComponent, ref, renderSlot, shallowReactive, VNode, watch } from "vue";
+import { defineComponent, renderSlot, watch } from "vue";
 import { StepService } from './step.service';
-import { ElStepDirection } from './types';
-import { StepComponent } from './step';
+import { ElStepDirection, ElStepStatus } from './types';
 
 
 export const Steps = defineComponent({
@@ -19,32 +18,25 @@ export const Steps = defineComponent({
       default: 'horizontal'
     },
     finishStatus: {
-      type: String,
+      type: Enum<ElStepStatus>(),
       default: 'finish'
     },
     processStatus: {
-      type: String,
+      type: Enum<ElStepStatus>(),
       default: 'process'
     }
   },
 
   setup(props, ctx) {
     const service = new StepService(props);
-    const stepComponents = shallowReactive<StepComponent[]>([]);
-
-    watch(() => stepComponents, (value) => {
-      // console.log(value);
-    })
+    
     watch(() => props.active, (value, oldValue) => {
       ctx.emit('change', value, oldValue);
     });
-    return {stepComponents};
   },
 
   render() {
     const { simple, direction, $slots } = this;
-    const slot = renderSlot($slots, 'default');
-
     return (
       <div
         class={[
@@ -53,7 +45,7 @@ export const Steps = defineComponent({
           simple && 'el-steps--simple'
         ]}
       >
-        {slot}
+        { renderSlot($slots, 'default')}
       </div>
     );
   },

@@ -216,16 +216,33 @@ export default defineComponent({
             inactive-color="#ff4949"
           />
         </p>
-        <p style="width: 400px">
-          <Steps active={stepActiveRef.value} finish-status="success">
+        <p style="width: 400px;">
+          <Steps space="200px" active={1} finishStatus="success">
+            <Step title="已完成"></Step>
+            <Step title="进行中"></Step>
+            <Step title="步骤 3"></Step>
+          </Steps>
+          <Steps active={stepActiveRef.value} finishStatus="success">
             <Step title="步骤 1"></Step>
             <Step title="步骤 2"></Step>
             <Step title="步骤 3"></Step>
           </Steps>
           <Button onClick={() => {
             if (stepActiveRef.value++ > 2) stepActiveRef.value = 0;
-            console.log(stepActiveRef.value);
           }}>next</Button>
+
+          <Steps active={2} alignCenter>
+            <Step title="步骤1" description="这是一段很长很长很长的描述性文字"></Step>
+            <Step title="步骤2" description="这是一段很长很长很长的描述性文字"></Step>
+            <Step title="步骤3" description="这是一段很长很长很长的描述性文字"></Step>
+            <Step title="步骤4" description="这是一段很长很长很长的描述性文字"></Step>
+          </Steps>
+
+          <Steps active={1} simple>
+            <Step title="步骤 1" icon="el-icon-edit"></Step>
+            <Step title="步骤 2" icon="el-icon-upload"></Step>
+            <Step title="步骤 3" icon="el-icon-picture"></Step>
+          </Steps>
         </p>
 
 

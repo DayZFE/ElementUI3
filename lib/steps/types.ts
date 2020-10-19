@@ -2,6 +2,9 @@ import { CSSProperties, Ref } from 'vue';
 
 export type ElStepDirection = 'vertical' | 'horizontal';
 
+export type ElStepStatus = 'wait' | 'process' | 'finish' | 'error' | 'success';
+
+
 export interface ElStepProps {
   space?: number | string;
   active: number;
@@ -23,7 +26,7 @@ export interface ElStepsData {
   processStatus: string;
   stepOffset: number;
   direction: string;
-  steps: Ref<ElStepData>[];
+  steps: ElStepData[];
 }
 
 export interface ElStepData {

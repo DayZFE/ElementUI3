@@ -20,26 +20,24 @@ export class StepService {
       isCenter: computed<boolean>(() => !!props.alignCenter),
       isVertical: computed(() => props.direction === 'vertical'),
       space: computed(() => props.simple ? '' : props.space),
-      simple: props.simple,
-      finishStatus: props.finishStatus,
-      processStatus: props.processStatus,
-      direction: props.direction,
-      steps: reactive([]),
+      simple: toRef(props, 'simple'),
+      finishStatus: toRef(props, 'finishStatus'),
+      processStatus: toRef(props, 'processStatus'),
+      direction: toRef(props, 'direction'),
+      steps: [],
       stepOffset: 0,
     }) as ElStepsData;
 
     watch(
       () => this.state.steps,
-      values => values.forEach(($data, index) => {
-        const data = $data.value;
+      values => values.forEach((data, index) => {
         data.index = index;
-        $data.value = data;
       }),
       { immediate: true }
     );
   }
 
-  style(data: Ref<ElStepData>) {
+  style(data: ElStepData) {
     return computed(() => {
       const style: CSSProperties = {};
       const {
@@ -64,35 +62,27 @@ export class StepService {
     });
   }
 
-  isLast(data: Ref<ElStepData>) {
+  isLast(data: ElStepData) {
     const steps = this.state.steps;
     return steps[steps.length - 1] === data;
   }
 
-  control(data: Ref<ElStepData>) {
+  control(data: ElStepData) {
     const state = this.state;
     const steps = state.steps;
-    watch(() => state.steps, (value) => {
-      console.log(value);
-    })
-    steps.push(data);
+    state.steps = [...steps, data];
 
-    const stop = watch(() => data.value.index, () => {
-      console.log('value');
-      watch(() => [state.active, state.processStatus], (values) => {
-        this.updateStatus(values[0] as number, data);
-      }, { immediate: true });
-      stop();
-    });
+    watch(() => [state.active, state.processStatus], (values) => {
+      this.updateStatus(values[0] as number, data);
+    }, { immediate: true });
 
     onUnmounted(() => {
-      state.steps = steps.filter(step => step.value.index = data.value.index);
+      state.steps = steps.filter(step => step.index === data.index);
     });
   }
 
-  updateStatus(index: number, $data: Ref<ElStepData>) {
+  updateStatus(index: number, data: ElStepData) {
     const { steps, finishStatus, processStatus } = this.state;
-    const data = $data.value;
     const prevData = steps[data.index - 1];
 
     if (index > data.index) {
@@ -108,9 +98,8 @@ export class StepService {
     }
   }
 
-  private calcProgress($data: Ref<ElStepData>, status: string) {
+  private calcProgress(data: ElStepData, status: string) {
     const { processStatus, isVertical, simple } = this.state;
-    const data = $data.value;
 
     let step = 100;
     const style: CSSProperties = {};
@@ -131,9 +120,5 @@ export class StepService {
       style.width = step + '%';
     }
     data.lineStyle = style;
-
-
-    // mark dirty
-    $data.value = data;
   }
 }

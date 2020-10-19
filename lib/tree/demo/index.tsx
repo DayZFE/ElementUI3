@@ -1,4 +1,4 @@
-import { TreeNodeData } from '../cdk';
+import { TreeNodeData } from '../../cdk';
 import { defineComponent } from 'vue';
 import Tree from '../tree';
 

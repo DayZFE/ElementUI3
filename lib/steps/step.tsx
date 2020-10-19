@@ -1,5 +1,5 @@
 import { renderCondition } from '../cdk/utils';
-import { computed, defineComponent, onUnmounted, ref, renderSlot } from 'vue';
+import { computed, defineComponent, onUnmounted, reactive, ref, renderSlot, toRefs, watch } from 'vue';
 import { injectService } from './step.service';
 import { ElStepData } from './types';
 import { Steps } from './steps';
@@ -14,27 +14,29 @@ export const Step = defineComponent({
   },
   setup(props, ctx) {
     const service = injectService();
-    const data = ref<ElStepData>({
+    const data = reactive<ElStepData>({
       index: 0,
       currentStatus: props.status || '',
       prevStatus: '',
       lineStyle: {},
     });
+
     service.control(data);
 
-    const serviceState = service.state;
+    const serviceState = toRefs(service.state);
     const style = service.style(data);
     const isLast = computed(() => service.isLast(data));
 
+
     return {
-      style,
-      isLast,
       isSimple: serviceState.simple,
       isCenter: serviceState.isCenter,
       isVertical: serviceState.isVertical,
       space: serviceState.space,
       stepOffset: serviceState.stepOffset,
       direction: serviceState.direction,
+      style,
+      isLast,
       data
     }
   },
@@ -60,6 +62,9 @@ export const Step = defineComponent({
       },
     } = this;
 
+    const currentStatusClass = `is-${currentStatus}`;
+    const mainIconClass = `el-icon-${currentStatus === 'success' ? 'check' : 'close'}`;
+    
     return <div
       style={style}
       class={[
@@ -70,7 +75,7 @@ export const Step = defineComponent({
         isCenter && !isVertical && !isSimple && 'is-center'
       ]}>
       {/* <!-- icon & line --> */}
-      <div class={["el-step__head", `is-${currentStatus}`]}>
+      <div class={["el-step__head", currentStatusClass]}>
         <div
           class="el-step__line"
           style={isLast ? '' : { marginRight: stepOffset + 'px' }}
@@ -89,21 +94,21 @@ export const Step = defineComponent({
             <i class={[
               'el-step__icon-inner',
               'is-status',
-              'el-icon-' + (currentStatus === 'success' ? 'check' : 'close')
+              mainIconClass
             ]} />
           )}
         </div>
       </div >
       {/* < !--title & description-- > */}
       <div class="el-step__main">
-        <div ref="title" class={['el-step__title', 'is-' + currentStatus]}>
+        <div ref="title" class={['el-step__title', currentStatusClass]}>
           {renderSlot($slots, 'title')}
           {title}
         </div>
         {renderCondition(
           isSimple,
           <div class="el-step__arrow" />,
-          <div class={['el-step__description', 'is-' + currentStatus]}>
+          <div class={['el-step__description', currentStatusClass]}>
             {renderSlot($slots, 'description')}
             {description}
           </div>

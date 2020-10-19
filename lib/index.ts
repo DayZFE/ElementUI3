@@ -12,8 +12,10 @@ export { Popover, vPopover } from './popover';
 export { Tooltip, vTooltip } from './tooltip';
 export { Tag } from './tag';
 export { Popconfirm, vPopconfirm } from './popconfirm';
-export { Progress } from './progress'; 
+export { Progress } from './progress';
 export { Upload } from './upload';
+export { Switch } from './switch';
+export { Steps, Step} from './steps';
 
 export {
   default as globalInject,

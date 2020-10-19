@@ -21,6 +21,9 @@ import {
   Tag,
   Upload,
   Progress,
+  Switch,
+  Steps,
+  Step
 } from "../../lib";
 
 export default defineComponent({
@@ -35,11 +38,13 @@ export default defineComponent({
     const notification = inject($notify)!;
     const divRef = ref<HTMLDivElement | null>(null);
     const showModal = ref(false);
+    const stepActiveRef = ref(0);
     const popoverProps = {
       title: '标题',
       content: '这是一条内容',
       placement: 'top-end',
     } as const;
+    const switchValue = ref(false);
     return () => (
       <div>
         <Backtop />
@@ -204,14 +209,31 @@ export default defineComponent({
             <Button>测试</Button>
           </Upload>
         </p>
-
+        <p>
+          <Switch
+            v-model={switchValue.value}
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          />
+        </p>
+        <p style="width: 400px">
+          <Steps active={stepActiveRef.value} finish-status="success">
+            <Step title="步骤 1"></Step>
+            <Step title="步骤 2"></Step>
+            <Step title="步骤 3"></Step>
+          </Steps>
+          <Button onClick={() => {
+            if (stepActiveRef.value++ > 2) stepActiveRef.value = 0;
+            console.log(stepActiveRef.value);
+          }}>next</Button>
+        </p>
 
 
         <div style='height:200px;overflow-y:auto'>
           <div ref={divRef} style='height:1000px'></div>
         </div>
         <div style='height:3000px'></div>
-      </div>
+      </div >
     );
   },
 });

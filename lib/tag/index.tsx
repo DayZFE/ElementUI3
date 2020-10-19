@@ -1,5 +1,6 @@
 import { ElSize } from '../types';
-import { computed, defineComponent, Prop } from 'vue';
+import { computed, defineComponent, Prop, Transition } from 'vue';
+import { Enum, renderCondition } from '../cdk/utils';
 
 export type TagEffect = 'dark' | 'light' | 'plain';
 
@@ -13,12 +14,12 @@ export const Tag = defineComponent({
     hit: Boolean,
     disableTransitions: Boolean,
     color: String,
-    type: String as () => TagType,
-    size: String as () => ElSize,
+    type: Enum<TagType>(),
+    size: Enum<ElSize>(),
     effect: {
-      type: String as () => TagEffect,
+      type: Enum<TagEffect>(),
       default: 'light',
-      validator(val: string) {
+      validator(val: any) {
         return ['dark', 'light', 'plain'].indexOf(val) !== -1;
       }
     } as Prop<TagEffect>,
@@ -34,8 +35,8 @@ export const Tag = defineComponent({
     }
     function handleClick(event: Event) {
       ctx.emit('click', event);
-    }    
-    
+    }
+
     const tagSize = computed(() => props.size);
 
     return {
@@ -47,14 +48,14 @@ export const Tag = defineComponent({
   render() {
     const {
       $slots,
-      type, 
-      tagSize, 
-      hit, 
-      effect, 
-      disableTransitions, 
+      type,
+      tagSize,
+      hit,
+      effect,
+      disableTransitions,
       color,
-      closable, 
-      handleClose, 
+      closable,
+      handleClose,
       handleClick
     } = this;
     const classes = [
@@ -74,6 +75,10 @@ export const Tag = defineComponent({
         {closable && <i class="el-tag__close el-icon-close" onClick={handleClose}></i>}
       </span>
     );
-    return disableTransitions ? tagEl : <transition name="el-zoom-in-center">{tagEl}</transition>;
+    return renderCondition(
+      disableTransitions,
+      tagEl,
+      <Transition name="el-zoom-in-center">{tagEl}</Transition>
+    );
   }
 });

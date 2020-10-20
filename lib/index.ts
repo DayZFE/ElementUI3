@@ -16,6 +16,7 @@ export { Progress } from './progress';
 export { Upload } from './upload';
 export { Switch } from './switch';
 export { Steps, Step} from './steps';
+export {Radio, RadioButton, RadioGroup} from './radio';
 
 export {
   default as globalInject,

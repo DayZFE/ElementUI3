@@ -23,7 +23,10 @@ import {
   Progress,
   Switch,
   Steps,
-  Step
+  Step,
+  RadioGroup,
+  Radio,
+  RadioButton
 } from "../../lib";
 
 export default defineComponent({
@@ -45,6 +48,8 @@ export default defineComponent({
       placement: 'top-end',
     } as const;
     const switchValue = ref(false);
+
+    const radioRef = ref('上海');
     return () => (
       <div>
         <Backtop />
@@ -165,7 +170,6 @@ export default defineComponent({
           <Tag type="info">标签五</Tag>
           <Tag type="danger">标签六</Tag>
           <Tag type="warning">标签七</Tag>
-
         </p>
 
         {/* notification */}
@@ -243,6 +247,32 @@ export default defineComponent({
             <Step title="步骤 2" icon="el-icon-upload"></Step>
             <Step title="步骤 3" icon="el-icon-picture"></Step>
           </Steps>
+        </p>
+        <p style="margin-top:20px">
+          <p style="margin-top:20px">
+            <RadioGroup v-model={radioRef.value}>
+              <Radio label="上海"></Radio>
+              <Radio label="北京"></Radio>
+              <Radio label="广州"></Radio>
+              <Radio label="深圳"></Radio>
+            </RadioGroup>
+          </p>
+          <p style="margin-top:20px">
+            <RadioGroup v-model={radioRef.value}>
+              <RadioButton label="上海"></RadioButton>
+              <RadioButton label="北京"></RadioButton>
+              <RadioButton label="广州"></RadioButton>
+              <RadioButton label="深圳"></RadioButton>
+            </RadioGroup>
+          </p>
+          <p style="margin-top:20px">
+            <RadioGroup v-model={radioRef.value} disabled={true}  size="small">
+              <RadioButton label="上海"></RadioButton>
+              <RadioButton label="北京"></RadioButton>
+              <RadioButton label="广州"></RadioButton>
+              <RadioButton label="深圳"></RadioButton>
+            </RadioGroup>
+          </p>       
         </p>
 
 

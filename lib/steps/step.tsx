@@ -1,8 +1,7 @@
-import { renderCondition } from '../cdk/utils';
+import { Enum, renderCondition } from '../cdk/utils';
 import { computed, defineComponent, onUnmounted, reactive, ref, renderSlot, toRefs, watch } from 'vue';
 import { injectService } from './step.service';
-import { ElStepData } from './types';
-import { Steps } from './steps';
+import { ElStepData, ElStepStatus } from './types';
 
 
 export const Step = defineComponent({
@@ -10,22 +9,22 @@ export const Step = defineComponent({
     title: String,
     icon: String,
     description: String,
-    status: String
+    status: Enum<ElStepStatus>()
   },
   setup(props, ctx) {
     const service = injectService();
     const data = reactive<ElStepData>({
       index: 0,
-      currentStatus: props.status || '',
-      prevStatus: '',
+      currentStatus: props.status || 'process',
+      prevStatus: 'process',
       lineStyle: {},
     });
 
     service.control(data);
 
-    const serviceState = toRefs(service.state);
+    const serviceState = service.stateRefs();
     const style = service.style(data);
-    const isLast = computed(() => service.isLast(data));
+    const isLast = service.testLast(data);
 
 
     return {

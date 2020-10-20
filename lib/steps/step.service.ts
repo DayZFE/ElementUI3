@@ -1,5 +1,5 @@
 import { coerceCssPixelValue } from '../cdk/coercion';
-import { computed, CSSProperties, inject, InjectionKey, onUnmounted, provide, reactive, Ref, toRef, watch } from 'vue';
+import { computed, CSSProperties, inject, InjectionKey, onUnmounted, provide, reactive, Ref, toRef, toRefs, watch } from 'vue';
 import { ElStepProps, ElStepsData, ElStepData } from './types';
 
 
@@ -9,7 +9,7 @@ export const injectService = () => inject(stepServiceKey)!;
 
 export class StepService {
 
-  state: ElStepsData;
+  private state: ElStepsData;
 
 
   constructor(props: ElStepProps) {
@@ -37,6 +37,11 @@ export class StepService {
     );
   }
 
+  // provide reactive
+  stateRefs() {
+    return toRefs(this.state);
+  }
+
   style(data: ElStepData) {
     return computed(() => {
       const style: CSSProperties = {};
@@ -62,26 +67,33 @@ export class StepService {
     });
   }
 
-  isLast(data: ElStepData) {
-    const steps = this.state.steps;
-    return steps[steps.length - 1] === data;
-  }
-
   control(data: ElStepData) {
     const state = this.state;
     const steps = state.steps;
     state.steps = [...steps, data];
 
+    // 
     watch(() => [state.active, state.processStatus], (values) => {
       this.updateStatus(values[0] as number, data);
     }, { immediate: true });
 
+    // delete when unmounted
     onUnmounted(() => {
       state.steps = steps.filter(step => step.index === data.index);
     });
   }
 
-  updateStatus(index: number, data: ElStepData) {
+  testLast(data: ElStepData) {
+    return computed(() => this.isLast(data));
+  }
+  
+
+  private isLast(data: ElStepData) {
+    const steps = this.state.steps;
+    return steps[steps.length - 1] === data;
+  }
+
+  private updateStatus(index: number, data: ElStepData) {
     const { steps, finishStatus, processStatus } = this.state;
     const prevData = steps[data.index - 1];
 

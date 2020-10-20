@@ -22,8 +22,8 @@ export interface ElStepsData {
   isCenter: boolean;
   isVertical: boolean;
   simple: boolean;
-  finishStatus: string;
-  processStatus: string;
+  finishStatus: ElStepStatus;
+  processStatus: ElStepStatus;
   stepOffset: number;
   direction: string;
   steps: ElStepData[];
@@ -31,7 +31,7 @@ export interface ElStepsData {
 
 export interface ElStepData {
   index: number;
-  currentStatus: string;
-  prevStatus: string;
+  currentStatus: ElStepStatus;
+  prevStatus: ElStepStatus;
   lineStyle: CSSProperties;
 }

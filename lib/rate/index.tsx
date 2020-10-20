@@ -1,5 +1,8 @@
-import { watchRef } from '@/cdk/utils';
+import { List, renderCondition, watchRef } from '@/cdk/utils';
 import { computed, defineComponent, Prop, ref, renderList, toRef, toRefs } from 'vue';
+import { getValueFromMap } from './utils';
+
+
 
 export const Rate = defineComponent({
   name: 'el-rate',
@@ -69,11 +72,9 @@ export const Rate = defineComponent({
       default: '#1f2d3d'
     },
     texts: {
-      type: Array,
-      default() {
-        return ['极差', '失望', '一般', '满意', '惊喜'];
-      }
-    } as Prop<string[]>,
+      type: List<string>(),
+      default: ['极差', '失望', '一般', '满意', '惊喜'],
+    },
     scoreTemplate: {
       type: String,
       default: '{value}'
@@ -92,9 +93,31 @@ export const Rate = defineComponent({
         const value = rateDisabled.value ? props.modelValue : current;
         result = props.scoreTemplate.replace(/\{\s*value\s*\}/, `${value}`);
       } else if (props.showText) {
-        result = texts.value[Math.ceil(current) - 1];
+        result = props.texts[Math.ceil(current) - 1];
       }
       return result;
+    });
+
+    const valueDecimal = computed(() => {
+      return props.modelValue * 100 - Math.floor(props.modelValue) * 100;
+    });
+
+    const activeColor = computed(() => {
+      return getValueFromMap(currentValue.value, colorMap);
+    });
+
+
+    const decimalStyle = computed(() => {
+      let width = '';
+      if (rateDisabled.value) {
+        width = `${valueDecimal.value}%`;
+      } else if (props.allowHalf) {
+        width = '50%';
+      }
+      return {
+        color: activeColor.value,
+        width
+      };
     });
 
     return {
@@ -108,6 +131,9 @@ export const Rate = defineComponent({
       max,
       rateDisabled,
       currentValue,
+      showText,
+      showScore,
+      textColor,
       text,
       decimalIconClass,
       classes,
@@ -117,7 +143,10 @@ export const Rate = defineComponent({
       selectValue,
       resetCurrentValue,
       getIconStyle,
+      showDecimalIcon,
+      decimalStyle,
     } = this;
+
     return (
       <div
         class="el-rate"
@@ -142,15 +171,20 @@ export const Rate = defineComponent({
               class={["el-rate__icon", classes[item - 1], { 'hover': hoverIndex === item }]}
               style={getIconStyle(item)}
             >
-              <i
-                v-if="showDecimalIcon(item)"
-                class={["el-rate__decimal", decimalIconClass]}
-                style="decimalStyle"
-              />
+              {renderCondition(
+                showDecimalIcon(item),
+                <i
+                  class={["el-rate__decimal", decimalIconClass]}
+                  style={decimalStyle}
+                />
+              )}
             </i>
           </span>
         })}
-        <span v-if="showText || showScore" class="el-rate__text" style="{ color: textColor }">{text}</span>
+        {renderCondition(
+          showText || showScore,
+          <span class="el-rate__text" style={`color: ${textColor};`}>{text}</span>
+        )}
       </div>
     );
   },

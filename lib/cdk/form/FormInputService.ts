@@ -1,4 +1,4 @@
-import { InjectionKey, inject, Ref, provide, ComputedRef, computed } from 'vue'
+import { InjectionKey, inject, provide, ComputedRef, computed } from 'vue'
 import FormModelService from './FormModelService'
 import { get as _get, set as _set } from 'lodash'
 import { ErrorList } from 'async-validator'
@@ -43,7 +43,7 @@ export default class FormInputService {
    * @memberof FormInputService
    */
   keyList: string[] = []
-  key: string = ''
+  key = ''
   validateOn: 'blur' | 'change' = 'change'
 
   errorList: ComputedRef<ErrorList>

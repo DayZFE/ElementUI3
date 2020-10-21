@@ -19,6 +19,6 @@ export function getElement(element: any): HTMLElement | null {
     return element.$el;
   }
   return null;
-};
+}
 
 export const renderCondition = (test: any, node: VNode | JSX.Element | undefined, elseNode?: VNode | JSX.Element | undefined) => !!test ? node : elseNode;

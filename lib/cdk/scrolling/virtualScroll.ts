@@ -40,7 +40,7 @@ export default class {
     let beforeHeight = 0;
     let contentHeight = 0;
     let afterHeight = 0;
-    for (let item of this.items) {
+    for (const item of this.items) {
       const height = item._itemHeight || this.defaultHeight;
       if (beforeHeight < this.scrollTop - buffer) {
         beforeHeight += height;

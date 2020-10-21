@@ -47,7 +47,7 @@ export function upload(options: AjaxOptions) {
 
   const headers = options.headers || {};
 
-  for (let item in headers) {
+  for (const item in headers) {
     if (headers.hasOwnProperty(item) && headers[item] !== null) {
       xhr.setRequestHeader(item, headers[item]);
     }

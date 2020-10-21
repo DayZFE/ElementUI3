@@ -1,11 +1,11 @@
 import { coerceCssPixelValue } from '../cdk/coercion';
-import { computed, CSSProperties, inject, InjectionKey, onUnmounted, provide, reactive, Ref, toRef, toRefs, watch } from 'vue';
+import { computed, CSSProperties, inject, InjectionKey, onUnmounted, provide, reactive, toRef, toRefs, watch } from 'vue';
 import { ElStepProps, ElStepsData, ElStepData } from './types';
 
 
 const stepServiceKey = Symbol() as InjectionKey<StepService>;
 
-export const injectService = () => inject(stepServiceKey)!;
+export const injectService = () => inject(stepServiceKey);
 
 export class StepService {
 

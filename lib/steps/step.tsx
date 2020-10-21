@@ -11,8 +11,9 @@ export const Step = defineComponent({
     description: String,
     status: Enum<ElStepStatus>()
   },
-  setup(props, ctx) {
+  setup(props) {
     const service = injectService();
+
     const data = reactive<ElStepData>({
       index: 0,
       currentStatus: props.status || 'process',
@@ -20,12 +21,14 @@ export const Step = defineComponent({
       lineStyle: {},
     });
 
-    service.control(data);
+    if (!service) {
+      return { data };
+    }
 
+    service.control(data);
     const serviceState = service.stateRefs();
     const style = service.style(data);
     const isLast = service.testLast(data);
-
 
     return {
       isSimple: serviceState.simple,

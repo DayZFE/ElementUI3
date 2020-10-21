@@ -10,7 +10,5 @@ export default class CdkTreeNode {
   currnetNodeIndex = 0;
   currentNodeList: TreeNodeData[] = [];
   currentNodeListLayer = 0;
-  constructor() {
-      
-  }
+  // constructor() {}
 }

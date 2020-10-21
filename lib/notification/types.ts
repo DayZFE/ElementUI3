@@ -1,3 +1,5 @@
+import { Enum, Method } from '@/cdk/utils';
+
 export interface NotificationConfig {
   offset: number;
   duration: number;
@@ -41,7 +43,7 @@ export const notificationProps = {
     default: ''
   },
   type: {
-    type: String as () => NotificationType,
+    type: Enum<NotificationType>(),
     default: '',
   },
   showClose: {
@@ -49,7 +51,7 @@ export const notificationProps = {
     default: false,
   },
   position: {
-    type: String as () => NotificationPosition,
+    type: Enum<NotificationPosition>(),
     default: 'top-right',
   },
   duration: {
@@ -57,11 +59,11 @@ export const notificationProps = {
     default: 4500,
   },
   onClick: {
-    type: Function as () => Function | null,
+    type: Method<((e: Event) => void) | null>(),
     default: null,
   },
-  onClose: { 
-    type: Function as () => Function | null,
+  onClose: {
+    type: Method<(() => void) | null>(),
     default: null
   },
   customClass: String,

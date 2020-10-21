@@ -1,4 +1,4 @@
-import { ref, customRef, computed, nextTick, toRef, SetupContext, reactive, CSSProperties, watch } from 'vue';
+import { ref, computed, nextTick, toRef, SetupContext, reactive, CSSProperties, watch } from 'vue';
 import { injectRadioService } from './radio.service';
 import { vmodelRef, watchRef } from '../cdk/utils';
 import { SPACE } from '../cdk/keycodes';

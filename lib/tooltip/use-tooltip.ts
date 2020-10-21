@@ -1,4 +1,4 @@
-import {computed, watch, onUnmounted, ref, shallowReactive } from "vue";
+import {computed, watch, onUnmounted, ref } from "vue";
 import { Placement, TriggerType, ArrowPlacement, OVERLAY_POSITION_MAP } from './types';
 import { ESCAPE } from "../cdk/keycodes";
 import { addEvent } from "../cdk/utils";

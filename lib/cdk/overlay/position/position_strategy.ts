@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { OverlayProps } from '../overlay';
 
-export class PositionStrategy {
+export abstract class PositionStrategy {
   setup(): OverlayProps {
     return {
       positionedStyle: ref({}),
@@ -9,15 +9,9 @@ export class PositionStrategy {
     };
   }
 
-  apply?(overlayElement: Element): void {
+  apply?(overlayElement: Element): void;
 
-  }
+  disapply?(): void;
 
-  disapply?(): void {
-
-  }
-
-  dispose(): void {
-
-  }
+  abstract dispose(): void;
 }

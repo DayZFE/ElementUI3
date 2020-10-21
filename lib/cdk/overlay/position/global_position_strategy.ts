@@ -1,4 +1,4 @@
-import { CSSProperties, reactive, ref, Ref } from "vue";
+import { CSSProperties, ref } from "vue";
 import { OverlayProps } from "../overlay";
 import { PositionStrategy } from "./position_strategy";
 
@@ -14,20 +14,20 @@ import { PositionStrategy } from "./position_strategy";
  */
 export class GlobalPositionStrategy extends PositionStrategy {
   private _cssPosition: 'static' | 'absolute' | 'fixed' | 'relative' = 'static';
-  private _topOffset: string = '';
-  private _bottomOffset: string = '';
-  private _leftOffset: string = '';
-  private _rightOffset: string = '';
-  private _alignItems: string = '';
-  private _justifyContent: string = '';
-  private _width: string = '';
-  private _height: string = '';
+  private _topOffset = '';
+  private _bottomOffset = '';
+  private _leftOffset = '';
+  private _rightOffset = '';
+  private _alignItems = '';
+  private _justifyContent = '';
+  private _width = '';
+  private _height = '';
 
   /**
    * Sets the top position of the overlay. Clears any previously set vertical position.
    * @param value New top offset.
    */
-  top(value: string = ''): this {
+  top(value = ''): this {
     this._bottomOffset = '';
     this._topOffset = value;
     this._alignItems = 'flex-start';
@@ -38,7 +38,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Sets the left position of the overlay. Clears any previously set horizontal position.
    * @param value New left offset.
    */
-  left(value: string = ''): this {
+  left(value = ''): this {
     this._rightOffset = '';
     this._leftOffset = value;
     this._justifyContent = 'flex-start';
@@ -49,7 +49,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Sets the bottom position of the overlay. Clears any previously set vertical position.
    * @param value New bottom offset.
    */
-  bottom(value: string = ''): this {
+  bottom(value = ''): this {
     this._topOffset = '';
     this._bottomOffset = value;
     this._alignItems = 'flex-end';
@@ -60,7 +60,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Sets the right position of the overlay. Clears any previously set horizontal position.
    * @param value New right offset.
    */
-  right(value: string = ''): this {
+  right(value = ''): this {
     this._leftOffset = '';
     this._rightOffset = value;
     this._justifyContent = 'flex-end';
@@ -71,7 +71,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Sets the overlay width and clears any previously set width.
    * @param value New width for the overlay
    */
-  width(value: string = ''): this {
+  width(value = ''): this {
     this._width = value;
     return this;
   }
@@ -80,7 +80,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Sets the overlay height and clears any previously set height.
    * @param value New height for the overlay
    */
-  height(value: string = ''): this {
+  height(value = ''): this {
     this._height = value;
     return this;
   }
@@ -90,7 +90,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    * Clears any previously set horizontal position.
    * @param offset Overlay offset from the horizontal center.
    */
-  centerY(offset: string = ''): this {
+  centerY(offset = ''): this {
     this.left(offset);
     this._justifyContent = 'center';
     return this;
@@ -102,7 +102,7 @@ export class GlobalPositionStrategy extends PositionStrategy {
    *
    * @param offset Overlay offset from the vertical center.
    */
-  centerX(offset: string = ''): this {
+  centerX(offset = ''): this {
     this.top(offset);
     this._alignItems = 'center';
     return this;

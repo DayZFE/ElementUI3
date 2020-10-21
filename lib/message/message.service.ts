@@ -5,8 +5,6 @@ import { MessageData, MessageDataOptions } from './types';
 let _$counter = 0;
 
 export abstract class MessageService {
-  constructor() {
-  }
 
   info(content: string, options?: MessageDataOptions): void {
     this.create({ type: 'info', content, options });

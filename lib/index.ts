@@ -15,8 +15,10 @@ export { Popconfirm, vPopconfirm } from './popconfirm';
 export { Progress } from './progress';
 export { Upload } from './upload';
 export { Switch } from './switch';
-export { Steps, Step} from './steps';
-export {Radio, RadioButton, RadioGroup} from './radio';
+export { Steps, Step } from './steps';
+export { Radio, RadioButton, RadioGroup } from './radio';
+
+export { Spinner } from './spinner';
 
 export {
   default as globalInject,

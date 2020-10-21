@@ -1,5 +1,3 @@
-import { App } from "vue";
-
 export * from './overlay';
 export * from './position/position_pair';
 export * from './position/global_position_strategy';

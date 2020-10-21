@@ -1,4 +1,4 @@
-import { CSSProperties, Ref } from 'vue';
+import { CSSProperties } from 'vue';
 
 export type ElStepDirection = 'vertical' | 'horizontal';
 

@@ -229,8 +229,8 @@ export class FlexiblePositionStrategy extends PositionStrategy {
   }
 
   private _caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
-    let offsetX = window.pageXOffset;
-    let offsetY = window.pageYOffset;
+    const offsetX = window.pageXOffset;
+    const offsetY = window.pageYOffset;
     this.subscribe = () => {
       if (this.isVisible) {
         const nowTop = this.window.pageYOffset;

@@ -25,7 +25,7 @@ export const Rate = defineComponent({
       default() {
         return ['#F7BA2A', '#F7BA2A', '#F7BA2A'];
       }
-    } as Prop<string[] | object>,
+    } as Prop<string[] | Record<string, unknown>>,
     voidColor: {
       type: String,
       default: '#C6D1DE'
@@ -39,7 +39,7 @@ export const Rate = defineComponent({
       default() {
         return ['el-icon-star-on', 'el-icon-star-on', 'el-icon-star-on'];
       }
-    } as Prop<string[] | object>,
+    } as Prop<string[] | Record<string, unknown>>,
     voidIconClass: {
       type: String,
       default: 'el-icon-star-off'
@@ -80,7 +80,7 @@ export const Rate = defineComponent({
     }
   },
 
-  setup(props, ctx) {
+  setup(props) {
     const currentValue = watchRef(toRef(props, 'modelValue'), value => value);
     const rateDisabled = watchRef(toRef(props, 'disabled'), value => value);
     const texts = ref([]);
@@ -100,6 +100,7 @@ export const Rate = defineComponent({
     return {
       currentValue,
       rateDisabled,
+      text,
     }
   },
 

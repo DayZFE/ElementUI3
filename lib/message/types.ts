@@ -1,7 +1,7 @@
 export type MessageType = 'success' | 'info' | 'warning' | 'error' | 'loading';
 
 export interface MessageData {
-  type?: 'success' | 'info' | 'warning' | 'error' | 'loading';
+  type?: MessageType;
   content?: string;
   iconClass?: string;
   messageId?: string;
@@ -10,4 +10,5 @@ export interface MessageData {
 }
 
 export interface MessageDataOptions {
+  data?: string;
 }

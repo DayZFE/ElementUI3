@@ -1,8 +1,9 @@
-import {computed, watch, onUnmounted, ref } from "vue";
+import { computed, watch, onUnmounted, ref, toRef, SetupContext } from "vue";
 import { Placement, TriggerType, ArrowPlacement, OVERLAY_POSITION_MAP } from './types';
 import { ESCAPE } from "../cdk/keycodes";
 import { addEvent } from "../cdk/utils";
 import { FlexiblePositionStrategy, provideStrategy } from '../cdk/overlay';
+import { vmodelRef } from '../cdk/hook';
 
 
 interface TooltipProps {
@@ -11,15 +12,17 @@ interface TooltipProps {
   visibleArrow: boolean;
   arrowOffset: number;
   tabindex: number;
+  modelValue: boolean;
 }
 
 let tooltipCounter = 0;
 
 export const useTooltip = (
   props: TooltipProps,
+  ctx: SetupContext,
   trigger: TriggerType = 'hover',
 ) => {
-  const visible = ref(false);
+  const visible = vmodelRef(toRef(props, 'modelValue'), (value) => ctx.emit('update:modelValue', value));
   const referenceRef = ref<HTMLElement | null>(null);
   const popperRef = ref<HTMLElement | null>(null);
 
@@ -32,7 +35,7 @@ export const useTooltip = (
     { immediate: true }
   );
   provideStrategy(strategy);
-  
+
 
   const tooltipId = `el-tooltip-${tooltipCounter++}`;
 
@@ -88,6 +91,9 @@ export const useTooltip = (
         addEvent(reference, 'click', show),
         addEvent(reference, 'keydown', (e) => e.keyCode === ESCAPE && close()),
         addEvent(document, 'click', (e) => {
+          if (!visible.value) {
+            return;
+          }
           const target = e.target as HTMLElement
           const isContain = reference.contains(target) || popper.contains(target);
           if (!isContain) {
@@ -113,9 +119,7 @@ export const useTooltip = (
     }
   });
 
-  onUnmounted(() => {
-    destroyFns.forEach(value => value());
-  });
+  onUnmounted(() => destroyFns.forEach(value => value()));
 
   return {
     visible,

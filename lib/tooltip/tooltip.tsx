@@ -42,9 +42,13 @@ export const Tooltip = defineComponent({
       type: String,
       default: 'el-tooltip__popper',
     },
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props) {
-    const state = useTooltip(props);
+  setup(props, ctx) {
+    const state = useTooltip(props, ctx);
 
     const popoverClass = computed(() => {
       const clazz = [props.popperClass];
@@ -78,7 +82,7 @@ export const Tooltip = defineComponent({
     let node: VNode | VNode[] | undefined = slots.default?.();
     if (node) {
       // set the reference
-      const setReference = (ref: object | null) => {
+      const setReference = (ref: any | null) => {
         this.reference = getElement(ref)
       };
       // get the node

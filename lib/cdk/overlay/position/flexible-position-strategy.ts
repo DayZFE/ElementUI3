@@ -1,8 +1,7 @@
 import { CSSProperties, isRef, ref, Ref, ComponentPublicInstance } from 'vue';
-import { ConnectionPosition, ConnectionPositionPair, HorizontalConnectionPos, VerticalConnectionPos } from "./position_pair";
-import { PositionStrategy } from "./position_strategy";
+import { ConnectionPosition, ConnectionPositionPair, HorizontalConnectionPos, VerticalConnectionPos } from "./position-pair";
+import { PositionStrategy, OverlayProps } from "./position-strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { OverlayProps } from '../overlay';
 import { getElement } from '../../utils';
 interface Point {
   x: number;

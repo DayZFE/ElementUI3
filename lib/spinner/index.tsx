@@ -1,5 +1,6 @@
-import { coerceCssPixelValue } from '@/cdk/coercion';
 import { computed, defineComponent } from 'vue'
+
+import { coerceCssPixelValue } from '../cdk/coercion';
 
 export const Spinner = defineComponent({
   name: 'ElSpinner',

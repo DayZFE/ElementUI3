@@ -34,9 +34,9 @@ export const Notification = defineComponent({
     const timer = duration > 0 ? new CdkTimer(() => close(), duration).start() : undefined;
 
 
-    const click = () => {
+    const click = (e: Event) => {
       if (typeof onClick === 'function') {
-        onClick();
+        onClick(e);
       }
     };
 
@@ -55,7 +55,7 @@ export const Notification = defineComponent({
     });
 
     const groupClass = computed(() => {
-      let clazz = ['el-notification__group'];
+      const clazz = ['el-notification__group'];
       if (!!typeClass) {
         clazz.push('is-with-icon');
       }

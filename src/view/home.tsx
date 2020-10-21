@@ -26,7 +26,8 @@ import {
   Step,
   RadioGroup,
   Radio,
-  RadioButton
+  RadioButton,
+  Drawer
 } from "../../lib";
 
 export default defineComponent({
@@ -48,6 +49,8 @@ export default defineComponent({
       placement: 'top-end',
     } as const;
     const switchValue = ref(false);
+
+    const showDrawer = ref(false);
 
     const radioRef = ref('上海');
     return () => (
@@ -151,7 +154,7 @@ export default defineComponent({
         </p>
 
         <p>
-          <Popconfirm ref="popconfirm" />
+          <Popconfirm ref="popconfirm" title="test content"/>
           <Button v-popconfirm="popconfirm">click </Button>
         </p>
 
@@ -266,15 +269,18 @@ export default defineComponent({
             </RadioGroup>
           </p>
           <p style="margin-top:20px">
-            <RadioGroup v-model={radioRef.value} disabled={true}  size="small">
+            <RadioGroup v-model={radioRef.value} disabled={true} size="small">
               <RadioButton label="上海"></RadioButton>
               <RadioButton label="北京"></RadioButton>
               <RadioButton label="广州"></RadioButton>
               <RadioButton label="深圳"></RadioButton>
             </RadioGroup>
-          </p>       
+          </p>
         </p>
-
+        <p>
+          <Button onClick={() => showDrawer.value = true}>show drawer</Button>
+          <Drawer v-model={[showDrawer.value, 'visible']}></Drawer>
+        </p>
 
         <div style='height:200px;overflow-y:auto'>
           <div ref={divRef} style='height:1000px'></div>

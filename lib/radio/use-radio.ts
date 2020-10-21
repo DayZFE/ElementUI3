@@ -1,6 +1,6 @@
 import { ref, computed, nextTick, toRef, SetupContext, reactive, CSSProperties, watch } from 'vue';
 import { injectRadioService } from './radio.service';
-import { vmodelRef, watchRef } from '../cdk/utils';
+import { vmodelRef, watchRef } from '../cdk/hook';
 import { SPACE } from '../cdk/keycodes';
 import { ElSize } from '../types';
 
@@ -16,7 +16,7 @@ interface RadioProps {
 export function useRadio(props: RadioProps, ctx: SetupContext) {
   const nameRef = ref('');
   const disabledRef = watchRef(toRef(props, 'disabled'), (arg) => !!arg);
-  const checkedRef = watchRef([props.modelValue, props.label], (v1, v2) => v1 === v2);
+  const checkedRef = watchRef([props.modelValue, props.label], ([v1, v2]) => v1 === v2);
   const radioSizeRef = watchRef(toRef(props, 'size'), (arg) => arg || '');
   const tabIndex = computed(() => (disabledRef.value || !checkedRef.value) ? -1 : 0);
   const focusRef = ref(false);

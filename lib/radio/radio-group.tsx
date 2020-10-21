@@ -1,7 +1,8 @@
 import { DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, UP_ARROW } from '../cdk/keycodes';
 import { defineComponent, ref, renderSlot, watch } from 'vue';
 import { RadioService } from './radio.service';
-import { Enum, fastWatch } from '../cdk/utils';
+import { Enum } from '../cdk/utils';
+import { fastWatch } from '../cdk/hook';
 import { ElSize } from '../types';
 
 export const RadioGroup = defineComponent({

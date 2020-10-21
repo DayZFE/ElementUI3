@@ -1,6 +1,5 @@
 import { CSSProperties, ref } from "vue";
-import { OverlayProps } from "../overlay";
-import { PositionStrategy } from "./position_strategy";
+import { PositionStrategy, OverlayProps } from "./position-strategy";
 
 
 

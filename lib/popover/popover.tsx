@@ -57,7 +57,7 @@ export const Popover = defineComponent({
     popperClass: String,
   },
   setup(props, ctx) {
-    const state = useTooltip(props, props.trigger);
+    const state = useTooltip(props, ctx, props.trigger);
 
     const popoverClass = computed(() => {
       const clazz = ['el-popover', 'el-popper'];
@@ -68,19 +68,6 @@ export const Popover = defineComponent({
         clazz.push('el-popover--plain');
       }
       return clazz;
-    });
-
-    state.visible.value = props.modelValue;
-    watch(state.visible, (value) => {
-      if (props.modelValue !== value) {
-        ctx.emit('update:modelValue', value);        
-      }
-    });
-
-    watch(() => props.modelValue, (value) => {
-      if (state.visible.value !== value) {
-        state.visible.value = value;
-      }
     });
 
     return {
@@ -107,7 +94,7 @@ export const Popover = defineComponent({
     let node: VNode | VNode[] | undefined = slots.default?.();
     if (node) {
       // set the reference
-      const setReference = (ref: object | null) => {
+      const setReference = (ref: any) => {
         this.reference = getElement(ref)
       };
       // get the node

@@ -4,20 +4,35 @@ import {
   renderSlot,
   onMounted,
   watch,
-  reactive,
   CSSProperties,
   onUnmounted,
   watchEffect,
   Transition,
-  Ref,
   computed,
   inject,
-  provide, nextTick
+  provide, 
+  nextTick, 
+  ref
 } from "vue";
-import { PositionStrategy } from './position/position_strategy';
+import { PositionStrategy, GlobalPositionStrategy } from './position';
 import './overlay.scss';
 
+
+/**
+ * @description
+ *  This class will provider a <div /> in
+ *  <body />, it can help teleport find the
+ *  right tag. After that, The Overlay can 
+ *  render the content in slot.
+ * 
+ * @date 2020-10-21
+ * 
+ * @export
+ * @class OverlayPrivider
+ */
 class OverlayProvider {
+  static instance = new OverlayProvider(document);
+
   div?: Element | null;
   constructor(document: Document) {
     let div = this.div = document.getElementById('vue-cdk-overlay');
@@ -29,7 +44,6 @@ class OverlayProvider {
     }
   }
 }
-const overlayProvider = new OverlayProvider(document);
 
 /**
  * @description
@@ -49,15 +63,17 @@ export interface OverlayConfig {
   readonly backgroundColor?: string;
 }
 
-export interface OverlayProps {
-  containerStyle: CSSProperties;
-  positionedStyle: Ref<CSSProperties>;
-}
 
 export const provideStrategy = (strategy: PositionStrategy) => {
   provide('cdk-overlay-strategy', strategy);
 }
 
+/**
+ * @description
+ * The content renderer.
+ * 
+ * @class Overlay
+ */
 export const Overlay = defineComponent({
   props: {
     visible: {
@@ -81,19 +97,13 @@ export const Overlay = defineComponent({
     panelClass: String,
   },
   setup(props, ctx) {
-    inject('cdk-overlay-provider', overlayProvider);
-    
-    const strategy = inject('cdk-overlay-strategy', new PositionStrategy());
+    inject('cdk-overlay-provider', OverlayProvider.instance);
 
-    const state = reactive<{
-      containerStyle: CSSProperties,
-      positionedStyle: CSSProperties,
-      overlayElement?: Element,
-      overlayWrapper?: HTMLElement,
-    }>({
-      containerStyle: {},
-      positionedStyle: {}
-    });
+    const strategy = inject('cdk-overlay-strategy', new GlobalPositionStrategy());
+
+    const container = ref<HTMLElement>();
+    const containerStyle = ref<CSSProperties>({});
+    const positionedStyle = ref<CSSProperties>({});
 
 
     const clickBackground = (event: Event) => {
@@ -118,19 +128,19 @@ export const Overlay = defineComponent({
     onMounted(() => {
       const overlayProps = strategy.setup();
 
-      state.containerStyle = overlayProps!.containerStyle;
+      containerStyle.value = overlayProps.containerStyle;
       watch(overlayProps.positionedStyle, (value) => {
-        state.positionedStyle = value;
-      },{immediate: true});
+        positionedStyle.value = value;
+      }, { immediate: true });
 
       nextTick(() => {
-        strategy.apply?.(state.overlayElement!);
+        strategy.apply?.(container.value!);
       });
 
       watch(() => props.visible, (value) => {
         if (value) {
           nextTick(() => {
-            strategy.apply?.(state.overlayElement!);
+            strategy.apply?.(container.value!);
           });
         } else {
           strategy.disapply?.();
@@ -152,28 +162,44 @@ export const Overlay = defineComponent({
       return clazz;
     });
 
-    return () => (
+    return {
+      containerClass,
+      clickBackground,
+      container,
+      containerStyle,
+      positionedStyle,
+    }
+  },
+  render() {
+    const { 
+      visible,
+      containerClass,
+      containerStyle,
+      clickBackground,
+      positionedStyle,
+      $slots,
+    } = this;
+    return (
       <Teleport to="#vue-cdk-overlay">
         <Transition name="cdk-overlay-fade">
-          <div v-show={props.visible}>
+          <div v-show={visible}>
             <div
-              class={containerClass.value}
-              style={state.containerStyle}
+              class={containerClass}
+              style={containerStyle}
               onClick={clickBackground}
-              ref={(ref) => state.overlayWrapper = ref as HTMLElement}
             >
               <div
-                ref={(ref) => state.overlayElement = ref as HTMLElement}
+                ref="container"
                 class="cdk-overlay"
-                style={state.positionedStyle}
+                style={positionedStyle}
                 onClick={event => event.cancelBubble = true}
               >
-                {renderSlot(ctx.slots, 'default')}
+                {renderSlot($slots, 'default')}
               </div>
             </div>
           </div>
         </Transition>
       </Teleport>
-    )
-  },
+    );
+  }
 });

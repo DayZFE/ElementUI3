@@ -1,5 +1,10 @@
-import { ref } from 'vue';
-import { OverlayProps } from '../overlay';
+import { CSSProperties, Ref, ref } from 'vue';
+
+
+export interface OverlayProps {
+  containerStyle: CSSProperties;
+  positionedStyle: Ref<CSSProperties>;
+}
 
 export abstract class PositionStrategy {
   setup(): OverlayProps {

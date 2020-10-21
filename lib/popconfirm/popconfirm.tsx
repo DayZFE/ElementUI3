@@ -1,8 +1,9 @@
 import { Popover } from '../popover';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, toRef } from 'vue';
 import { Button, ElButtonType } from '../button';
 import "../theme-chalk/src/popconfirm.scss";
 import { Placement } from '@/tooltip';
+import { vmodelRef } from '../cdk/hook';
 
 export const Popconfirm = defineComponent({
   props: {
@@ -41,17 +42,14 @@ export const Popconfirm = defineComponent({
     cancel: Function,
   },
   setup(props, ctx) {
-    const visible = ref(false);
-
+    const visible = vmodelRef(toRef(props, 'modelValue'), (value) => {ctx.emit('update:modelValue', value)});
+    
     const cancel = () => {
       visible.value = false;
-      ctx.emit('update:modelValue', false);
       props.cancel?.();
-
     }
     const confirm = () => {
       visible.value = false;
-      ctx.emit('update:modelValue', false);
       props.confirm?.();
     }
     return {
@@ -108,11 +106,11 @@ export const Popconfirm = defineComponent({
       )
     }
     return (<Popover 
-      v-model={this.visible} 
+      v-model={this.visible}
       ref="popover" 
       v-slots={slots} 
       trigger="click" 
-      title={title} 
+      // title={title}
       placement={placement} 
     />);
   }

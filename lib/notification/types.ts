@@ -1,4 +1,4 @@
-import { Enum, Method } from '@/cdk/utils';
+import { Enum, Method } from '../cdk/utils';
 
 export interface NotificationConfig {
   offset: number;

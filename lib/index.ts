@@ -17,8 +17,8 @@ export { Upload } from './upload';
 export { Switch } from './switch';
 export { Steps, Step } from './steps';
 export { Radio, RadioButton, RadioGroup } from './radio';
-
 export { Spinner } from './spinner';
+export { Drawer } from './drawer';
 
 export {
   default as globalInject,

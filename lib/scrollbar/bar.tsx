@@ -1,6 +1,6 @@
-import { on, off } from 'element-ui/src/utils/dom';
-import { defineComponent } from 'vue';
-import { renderThumbStyle, BAR_MAP } from './util';
+import { addEvent } from '@/cdk/utils';
+import { computed, defineComponent, ref } from 'vue';
+import { renderThumbStyle, BAR_MAP, BarProps } from './utils';
 
 /* istanbul ignore next */
 export const Bar = defineComponent({
@@ -12,57 +12,81 @@ export const Bar = defineComponent({
     move: Number
   },
 
-  computed: {
-    bar() {
-      return BAR_MAP[this.vertical ? 'vertical' : 'horizontal'];
-    },
+  setup(props) {
+    const state = {
+      bar: computed<BarProps>(() => BAR_MAP[props.vertical ? 'vertical' : 'horizontal']),
+      wrap: ref<HTMLElement>(),
+      thumb: ref<HTMLElement>(),
+      X: ref(0),
+      Y: ref(0),
+      cursorDown: false,
+    };
 
-    wrap() {
-      return this.$parent.wrap;
-    }
+
+
+    return state;
   },
 
   methods: {
-    clickThumbHandler(e) {
+    clickThumbHandler(e: MouseEvent) {
+      this.$parent?.$el
       // prevent click event of right button
-      if (e.ctrlKey || e.button === 2) {
+      if (e.ctrlKey || e.button === 2 || !(e.currentTarget instanceof HTMLElement)) {
         return;
       }
+      const { bar: { axis, direction, offset, client } } = this;
+      const target = e.currentTarget;
+      
       this.startDrag(e);
-      this[this.bar.axis] = (e.currentTarget[this.bar.offset] - (e[this.bar.client] - e.currentTarget.getBoundingClientRect()[this.bar.direction]));
+      this[axis] = (target[offset] - (e[client] - target.getBoundingClientRect()[direction]));
     },
 
-    clickTrackHandler(e) {
-      const offset = Math.abs(e.target.getBoundingClientRect()[this.bar.direction] - e[this.bar.client]);
-      const thumbHalf = (this.$refs.thumb[this.bar.offset] / 2);
-      const thumbPositionPercentage = ((offset - thumbHalf) * 100 / this.$el[this.bar.offset]);
+    clickTrackHandler(event: MouseEvent) {
+      const { thumb, $el, wrap, bar: {direction, client, offset, scroll, scrollSize} } = this;
+      if (!(thumb && wrap)) {
+        return;
+      }
+      const div = event.target! as HTMLDivElement;
+      const divOffset = Math.abs(div.getBoundingClientRect()[direction] - event[client]);
+      const thumbHalf = (thumb[offset] / 2);
+      const thumbPositionPercentage = ((divOffset - thumbHalf) * 100 / $el[offset]);
 
-      this.wrap[this.bar.scroll] = (thumbPositionPercentage * this.wrap[this.bar.scrollSize] / 100);
+      wrap[scroll] = (thumbPositionPercentage * wrap[scrollSize] / 100);
     },
 
-    startDrag(e) {
+    startDrag(e: Event) {
       e.stopImmediatePropagation();
       this.cursorDown = true;
 
-      on(document, 'mousemove', this.mouseMoveDocumentHandler);
-      on(document, 'mouseup', this.mouseUpDocumentHandler);
+      addEvent(document, 'mousemove', this.mouseMoveDocumentHandler);
+      addEvent(document, 'mouseup', this.mouseUpDocumentHandler);
       document.onselectstart = () => false;
     },
 
-    mouseMoveDocumentHandler(e) {
+    mouseMoveDocumentHandler(e: MouseEvent) {
+      const { 
+        thumb, 
+        $el, 
+        wrap, 
+        bar: {axis, direction, client, offset, scroll, scrollSize} 
+      } = this;
+      if (!(thumb && wrap)) {
+        return;
+      }
+
       if (this.cursorDown === false) return;
-      const prevPage = this[this.bar.axis];
+      const prevPage = this[axis];
 
       if (!prevPage) return;
 
-      const offset = ((this.$el.getBoundingClientRect()[this.bar.direction] - e[this.bar.client]) * -1);
-      const thumbClickPosition = (this.$refs.thumb[this.bar.offset] - prevPage);
-      const thumbPositionPercentage = ((offset - thumbClickPosition) * 100 / this.$el[this.bar.offset]);
+      const elOffset = (($el.getBoundingClientRect()[direction] - e[client]) * -1);
+      const thumbClickPosition = (thumb[offset] - prevPage);
+      const thumbPositionPercentage = ((elOffset - thumbClickPosition) * 100 / $el[offset]);
 
-      this.wrap[this.bar.scroll] = (thumbPositionPercentage * this.wrap[this.bar.scrollSize] / 100);
+      wrap[scroll] = (thumbPositionPercentage * wrap[scrollSize] / 100);
     },
 
-    mouseUpDocumentHandler(e) {
+    mouseUpDocumentHandler(e: Event) {
       this.cursorDown = false;
       this[this.bar.axis] = 0;
       off(document, 'mousemove', this.mouseMoveDocumentHandler);
@@ -72,20 +96,21 @@ export const Bar = defineComponent({
 
   destroyed() {
     off(document, 'mouseup', this.mouseUpDocumentHandler);
-  }
+  },
 
-  render(h) {
-    const { size, move, bar } = this;
+  render() {
+    const { size, move, bar, clickTrackHandler, clickThumbHandler } = this;
 
     return (
       <div
-        class={ ['el-scrollbar__bar', 'is-' + bar.key] }
-        onMousedown={ this.clickTrackHandler } >
+        class={['el-scrollbar__bar', 'is-' + bar.key]}
+        onMousedown={clickTrackHandler} 
+      >
         <div
           ref="thumb"
           class="el-scrollbar__thumb"
-          onMousedown={ this.clickThumbHandler }
-          style={ renderThumbStyle({ size, move, bar }) }>
+          onMousedown={clickThumbHandler}
+          style={renderThumbStyle({ size, move, bar })}>
         </div>
       </div>
     );

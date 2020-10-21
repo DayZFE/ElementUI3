@@ -1,12 +1,17 @@
-import { defineComponent } from 'vue'
+import { Model, renderCondition } from '../cdk/utils';
+import { CSSProperties, defineComponent, h, ref } from 'vue'
 import { Bar } from './bar';
+import scrollBarWidth from './utils';
 
 export default defineComponent({
   name: 'ElScrollbar',
 
   props: {
     native: Boolean,
-    wrapStyle: {},
+    wrapStyle: {
+      type: [String, Model<CSSProperties>()],
+      default: '',
+    },
     wrapClass: {},
     viewClass: {},
     viewStyle: {},
@@ -27,15 +32,16 @@ export default defineComponent({
     };
   },
 
-  computed: {
-    wrap() {
-      return this.$refs.wrap as HTMLElement;
+  setup() {
+    const wrapRef = ref<HTMLElement>();
+    return {
+      wrap: wrapRef,
     }
   },
 
   methods: {
     handleScroll() {
-      const wrap = this.wrap;
+      const wrap = this.wrap!;
 
       this.moveY = ((wrap.scrollTop * 100) / wrap.clientHeight);
       this.moveX = ((wrap.scrollLeft * 100) / wrap.clientWidth);
@@ -56,7 +62,7 @@ export default defineComponent({
 
   mounted() {
     if (this.native) return;
-    this.$nextTick(this.update);
+    this.$nextTick(() => this.update());
   },
 
   beforeDestroy() {
@@ -64,59 +70,66 @@ export default defineComponent({
   },
 
   render() {
-    const gutter = scrollbarWidth();
-    let style = this.wrapStyle;
+    const {
+      $slots,
+      tag,
+      wrapStyle,
+      wrapClass,
+      viewClass,
+      viewStyle,
+      native,
+      moveX,
+      moveY,
+      sizeWidth,
+      sizeHeight,
+      handleScroll,
+    } = this;
 
-    if (gutter) {
-      const gutterWith = `-${gutter}px`;
-      const gutterStyle = `margin-bottom: ${gutterWith}; margin-right: ${gutterWith};`;
+    const gutter = scrollBarWidth();
 
-      if (Array.isArray(this.wrapStyle)) {
-        style = toObject(this.wrapStyle);
-        style.marginRight = style.marginBottom = gutterWith;
-      } else if (typeof this.wrapStyle === 'string') {
-        style += gutterStyle;
-      } else {
-        style = gutterStyle;
-      }
+    let style: CSSProperties | string;
+    const gutterWith = `-${gutter}px`;
+    if (!wrapStyle) {
+      style = { marginBottom: gutterWith, marginRight: gutterWith };
+    } else if (typeof wrapStyle === "object") {
+      style = { ...wrapStyle };
+      style.marginRight = style.marginBottom = gutterWith;
+    } else {
+      style = `${wrapStyle ?? ''} margin-bottom: ${gutterWith}; margin-right: ${gutterWith};`;
     }
-    const view = h(this.tag, {
-      class: ['el-scrollbar__view', this.viewClass],
-      style: this.viewStyle,
-      ref: 'resize'
-    }, this.$slots.default);
-    const wrap = (
-      <div
-        ref="wrap"
-        style={style}
-        onScroll={this.handleScroll}
-        class={[this.wrapClass, 'el-scrollbar__wrap', gutter ? '' : 'el-scrollbar__wrap--hidden-default']}>
-        {[view]}
+
+    const divProps = {
+      ref: "wrap",
+      class: [wrapClass, 'el-scrollbar__wrap'],
+      style: style,
+      onScroll: undefined as any,
+    };
+
+    if (!native) {
+      divProps.class.push(gutter ? '' : 'el-scrollbar__wrap--hidden-default');
+      divProps.onScroll = handleScroll;
+    }
+
+    return (
+      <div class="el-scrollbar">
+        <div
+          {...divProps}
+          v-slots={{
+            default: () => h(tag, {
+              class: ['el-scrollbar__view', viewClass],
+              style: viewStyle,
+              ref: 'resize'
+            }, $slots.default)
+          }}
+        />,
+        {renderCondition(
+          !native,
+          [
+            <Bar move={moveX} size={sizeWidth} />,
+            <Bar vertical move={moveY} size={sizeHeight} />
+          ]
+        )}
       </div>
     );
-    let nodes;
-
-    if (!this.native) {
-      nodes = ([
-        wrap,
-        <Bar
-          move={this.moveX}
-          size={this.sizeWidth}></Bar>,
-        <Bar
-          vertical
-          move={this.moveY}
-          size={this.sizeHeight}></Bar>
-      ]);
-    } else {
-      nodes = ([
-        <div
-          ref="wrap"
-          class={[this.wrapClass, 'el-scrollbar__wrap']}
-          style={style}>
-          {[view]}
-        </div>
-      ]);
-    }
-    return h('div', { class: 'el-scrollbar' }, nodes);
   },
 });

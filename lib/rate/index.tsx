@@ -84,7 +84,6 @@
 //     const currentValue = watchRef(toRef(props, 'modelValue'), value => value);
 //     const rateDisabled = watchRef(toRef(props, 'disabled'), value => value);
 //     const texts = ref([]);
-
 //     const text = computed(() => {
 //       let result = '';
 //       const current = currentValue.value;
@@ -103,7 +102,6 @@
 //       text,
 //     }
 //   },
-
 //   render() {
 //     const {
 //       max,

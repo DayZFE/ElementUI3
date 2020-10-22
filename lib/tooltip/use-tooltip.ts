@@ -1,4 +1,4 @@
-import { computed, watch, onUnmounted, ref, toRef, SetupContext } from "vue";
+import { computed, watch, onUnmounted, ref, toRef, SetupContext, Ref, isRef } from "vue";
 import { Placement, TriggerType, ArrowPlacement, OVERLAY_POSITION_MAP } from './types';
 import { ESCAPE } from "../cdk/keycodes";
 import { addEvent } from "../cdk/utils";
@@ -20,7 +20,7 @@ let tooltipCounter = 0;
 export const useTooltip = (
   props: TooltipProps,
   ctx: SetupContext,
-  trigger: TriggerType = 'hover',
+  trigger: TriggerType | Ref<TriggerType> = 'hover',
 ) => {
   const visible = vmodelRef(toRef(props, 'modelValue'), (value) => ctx.emit('update:modelValue', value));
   const referenceRef = ref<HTMLElement | null>(null);
@@ -72,9 +72,12 @@ export const useTooltip = (
 
   const destroyFns: (() => void)[] = [];
 
-  watch(() => [referenceRef.value, popperRef.value], (values) => {
-    const reference = values[0];
-    const popper = values[1];
+  const triggerRef = isRef(trigger) ? trigger : ref(trigger);
+
+  watch(() => [referenceRef.value, popperRef.value, triggerRef.value], (values) => {
+    const reference = values[0] as HTMLElement;
+    const popper = values[1] as HTMLElement;
+    const trigger = values[2]  as TriggerType;
     if (!(reference && popper)) {
       return;
     }

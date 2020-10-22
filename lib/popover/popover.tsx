@@ -1,6 +1,6 @@
-import { defineComponent, ref, watch, computed, renderSlot, Transition, VNode, cloneVNode, unref } from 'vue';
+import { defineComponent, computed, renderSlot, Transition, VNode, cloneVNode } from 'vue';
 import { Overlay } from '../cdk/overlay';
-import { getElement, isValidElement } from '../cdk/utils';
+import { Enum, getElement, isValidElement } from '../cdk/utils';
 import { Placement, TriggerType, useTooltip } from '../tooltip';
 
 export const Popover = defineComponent({
@@ -27,11 +27,11 @@ export const Popover = defineComponent({
       default: 150
     },
     placement: {
-      type: String as () => Placement,
+      type: Enum<Placement>(),
       default: 'top',
     },
     trigger: {
-      type: String as () => TriggerType,
+      type: Enum<TriggerType>(),
       default: 'click',
     },
     visibleArrow: {

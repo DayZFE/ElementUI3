@@ -160,9 +160,11 @@ export default defineComponent({
 
         {/* tooltips */}
         <p>
-          <Tooltip ref="tooltip" content="这是一条测试内容！">
-            tooltips!!!!
-          </Tooltip>
+          <Tooltip 
+            ref="tooltip" 
+            content="这是一条测试内容！" 
+            v-slots={{reference: () => 'tooltips!!!!'}} 
+          />
         </p>
 
         <p>

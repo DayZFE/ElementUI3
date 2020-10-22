@@ -1,6 +1,6 @@
 import { ElSize } from '../types';
 import { computed, defineComponent, Prop, Transition } from 'vue';
-import { Enum, renderCondition } from '../cdk/utils';
+import { Enum, Method, renderCondition } from '../cdk/utils';
 
 export type TagEffect = 'dark' | 'light' | 'plain';
 
@@ -24,17 +24,19 @@ export const Tag = defineComponent({
       }
     } as Prop<TagEffect>,
 
-    onClose: Function,
-    onClick: Function,
+    onClose: Method<(e: Event)=>void>(),
+    onClick: Method<(e: Event)=>void>(),
   },
 
   setup(props, ctx) {
     function handleClose(event: Event) {
       event.stopPropagation();
-      ctx.emit('close', event);
+      props.onClose?.(event);
+      // ctx.emit('close', event);
     }
     function handleClick(event: Event) {
-      ctx.emit('click', event);
+      props.onClick?.(event);
+      // ctx.emit('click', event);
     }
 
     const tagSize = computed(() => props.size);

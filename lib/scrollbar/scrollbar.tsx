@@ -1,5 +1,5 @@
 import { Model, renderCondition } from '../cdk/utils';
-import { CSSProperties, defineComponent, h, ref } from 'vue'
+import { CSSProperties, defineComponent, h, provide, ref } from 'vue'
 import { Bar } from './bar';
 import scrollBarWidth from './utils';
 
@@ -34,6 +34,9 @@ export default defineComponent({
 
   setup() {
     const wrapRef = ref<HTMLElement>();
+
+    provide('el-scrollbar-wrap', wrapRef);
+
     return {
       wrap: wrapRef,
     }
@@ -48,12 +51,13 @@ export default defineComponent({
     },
 
     update() {
-      let heightPercentage, widthPercentage;
       const wrap = this.wrap;
-      if (!wrap) return;
+      if (!wrap) {
+        return;
+      }
 
-      heightPercentage = (wrap.clientHeight * 100 / wrap.scrollHeight);
-      widthPercentage = (wrap.clientWidth * 100 / wrap.scrollWidth);
+      const heightPercentage = (wrap.clientHeight * 100 / wrap.scrollHeight);
+      const widthPercentage = (wrap.clientWidth * 100 / wrap.scrollWidth);
 
       this.sizeHeight = (heightPercentage < 100) ? (heightPercentage + '%') : '';
       this.sizeWidth = (widthPercentage < 100) ? (widthPercentage + '%') : '';

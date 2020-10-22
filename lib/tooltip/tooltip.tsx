@@ -1,7 +1,7 @@
 import { cloneVNode, computed, defineComponent, renderSlot, VNode, Transition } from 'vue';
 import { Overlay } from '../cdk';
-import { getElement, isValidElement } from '../cdk/utils';
-import { Placement } from './types';
+import { Enum, getElement, isValidElement, List, renderCondition } from '../cdk/utils';
+import { Placement, TriggerType } from './types';
 import { useTooltip } from './use-tooltip';
 
 export const Tooltip = defineComponent({
@@ -39,19 +39,24 @@ export const Tooltip = defineComponent({
       default: 'el-fade-in-linear',
     },
     popperClass: {
-      type: String,
+      type: [String, List<string>()],
       default: 'el-tooltip__popper',
     },
     modelValue: {
       type: Boolean,
       default: false,
     },
+    trigger: {
+      type: Enum<TriggerType>(),
+      default: 'hover'
+    },
   },
   setup(props, ctx) {
-    const state = useTooltip(props, ctx);
+    const state = useTooltip(props, ctx, props.trigger);
 
     const popoverClass = computed(() => {
-      const clazz = [props.popperClass];
+      const { popperClass } = props;
+      const clazz = Array.isArray(popperClass) ? [...popperClass] : [popperClass];
       if (props.effect) {
         clazz.push(`is-${props.effect}`);
       }
@@ -79,7 +84,7 @@ export const Tooltip = defineComponent({
     } = this;
 
 
-    let node: VNode | VNode[] | undefined = slots.default?.();
+    let node: VNode | VNode[] | undefined = slots.reference?.();
     if (node) {
       // set the reference
       const setReference = (ref: any | null) => {
@@ -110,8 +115,8 @@ export const Tooltip = defineComponent({
               class={popoverClass}
               x-placement={arrowPlacement}
             >
-              {slots.content ? renderSlot(slots, 'content') : <span>{content}</span>}
-              {visibleArrow ? <div x-arrow class="popper__arrow" style={arrowStyle}></div> : undefined}
+              {renderCondition(slots.default, renderSlot(slots, 'default'), <span>{content}</span>)}
+              {renderCondition(visibleArrow, <div x-arrow class="popper__arrow" style={arrowStyle}></div>)}
             </div>
           </Transition>
         </Overlay>

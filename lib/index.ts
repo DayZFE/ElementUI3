@@ -19,6 +19,7 @@ export { Steps, Step } from './steps';
 export { Radio, RadioButton, RadioGroup } from './radio';
 export { Spinner } from './spinner';
 export { Drawer } from './drawer';
+export { Input } from './input';
 
 export {
   default as globalInject,

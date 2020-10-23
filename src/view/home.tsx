@@ -1,4 +1,4 @@
-import { defineComponent, inject, ref } from "vue";
+import { defineComponent, inject, KeepAlive, ref, watch, } from "vue";
 import {
   Alert,
   Avatar,
@@ -27,7 +27,8 @@ import {
   RadioGroup,
   Radio,
   RadioButton,
-  Drawer
+  Drawer,
+  Input
 } from "../../lib";
 
 export default defineComponent({
@@ -53,6 +54,12 @@ export default defineComponent({
     const showDrawer = ref(false);
 
     const radioRef = ref('上海');
+
+    const input = ref('');
+    const ElInput: any = Input;
+    watch(input, (value) => console.log(value));
+
+
     return () => (
       <div>
         <Backtop />
@@ -154,16 +161,16 @@ export default defineComponent({
         </p>
 
         <p>
-          <Popconfirm ref="popconfirm" title="test content"/>
+          <Popconfirm ref="popconfirm" title="test content" />
           <Button v-popconfirm="popconfirm">click </Button>
         </p>
 
         {/* tooltips */}
         <p>
-          <Tooltip 
-            ref="tooltip" 
-            content="这是一条测试内容！" 
-            v-slots={{reference: () => 'tooltips!!!!'}} 
+          <Tooltip
+            ref="tooltip"
+            content="这是一条测试内容！"
+            v-slots={{ reference: () => 'tooltips!!!!' }}
           />
         </p>
 
@@ -279,9 +286,15 @@ export default defineComponent({
             </RadioGroup>
           </p>
         </p>
+
         <p>
           <Button onClick={() => showDrawer.value = true}>show drawer</Button>
           <Drawer v-model={[showDrawer.value, 'visible']}></Drawer>
+        </p>
+
+        <p>
+          <ElInput v-model={input.value} placeholder="请输入内容" onInput={(e: Event) => input.value = (e.target! as any).value.replace(/\s*/g,'')}/>
+          <ElInput v-model={input.value} placeholder="请输入内容2" />
         </p>
 
         <div style='height:200px;overflow-y:auto'>

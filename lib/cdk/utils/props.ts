@@ -13,3 +13,4 @@ export function Model<T>(): () => T {
 export function Enum<T extends string>(): () => T {
   return String as unknown as () => T;
 }
+

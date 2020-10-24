@@ -67,6 +67,7 @@ function useInput(
     ctx.emit('input', '');
     ctx.emit('change', '');
     ctx.emit('clear');
+    ctx.emit('update:modelValue', '');
   }
 
   function setNativeInputValue(value: string) {
@@ -74,8 +75,6 @@ function useInput(
     if (!input || input.value === value) {
       return;
     }
-    console.log('input.value', input.value);
-    console.log('value', value);
     input.value = value;
   }
 
@@ -100,31 +99,15 @@ function useInput(
     if (isComposing.value) {
       return;
     }
-    inputValue.value = (event.target as InputElement).value;
 
-    ctx.emit('input', event);
+    if (onInputHook) {
+      ctx.emit('input', event);
+    } else {
+      inputValue.value = (event.target as InputElement).value;
+    }
 
-    // onInputHook?.(event);
-    // ensure native input value is controlled
-    // see: https://github.com/ElemeFE/element/issues/12850
-    nextTick(() => setNativeInputValue(inputValue.value));
+    setNativeInputValue(inputValue.value);
   }
-
-  return {
-    input: inputRef,
-    textarea: textareaRef,
-    focused: focusedRef,
-    getInput,
-    clear,
-    onFocus,
-    onBlur,
-    onChange,
-    onInput,
-  }
-}
-
-function useComposition(onInput: ((e: Event) => void)) {
-  const isComposing = ref(false);
 
   function onCompositionstart() {
     isComposing.value = true;
@@ -143,19 +126,36 @@ function useComposition(onInput: ((e: Event) => void)) {
       onInput(event);
     }
   }
+
   return {
+    input: inputRef,
+    textarea: textareaRef,
+    focused: focusedRef,
+    getInput,
+    clear,
+    onFocus,
+    onBlur,
+    onChange,
+    onInput,
     onCompositionstart,
     onCompositionupdate,
     onCompositionend,
   }
 }
 
+
+/**
+ * @function useClear
+ * @description
+ * Caculates when the clear icon 
+ * need to show.
+ */
 function useClear(
   clearable: Ref<boolean | undefined>,
   disabled: Ref<boolean | undefined>,
   readonly: Ref<boolean | undefined>,
   focus: Ref<boolean>,
-  inputValue: Ref<any>,
+  inputValue: Ref<string>,
 ) {
   const hovering = ref(false);
   const showClear = computed(() => {
@@ -211,8 +211,8 @@ function usePassword(
 function computeTextAreaStyle(
   textareaRef: Ref<HTMLTextAreaElement | undefined>,
   modelValueRef: Ref<string>,
-  autosizeRef: Ref<AutosizeData | boolean | undefined>,
   typeRef: Ref<string>,
+  autosizeRef: Ref<AutosizeData | boolean | undefined>,
   resizeRef: Ref<string | undefined>
 ) {
   const textareaCalcStyle = ref<CSSProperties>({});
@@ -358,6 +358,7 @@ export const Input = defineComponent({
     const diabledRef = toRef(props, 'disabled');
     const readonlyRef = toRef(props, 'readonly');
     const inputSize = toRef(props, 'size');
+    const showPassword = toRef(props, 'showPassword');
     const inputDisabled = diabledRef;
 
     const textState = useText(
@@ -366,7 +367,7 @@ export const Input = defineComponent({
       typeRef,
       diabledRef,
       readonlyRef,
-      toRef(props, 'showPassword'),
+      showPassword,
       toRef(props, 'showWordLimit')
     );
 
@@ -375,8 +376,6 @@ export const Input = defineComponent({
       textState.textValue,
       props.onInput
     );
-
-    const compoState = useComposition(inputState.onInput);
 
     const clearState = useClear(
       toRef(props, 'clearable'),
@@ -387,7 +386,7 @@ export const Input = defineComponent({
     );
 
     const pwdState = usePassword(
-      toRef(props, 'showPassword'),
+      showPassword,
       diabledRef,
       readonlyRef,
       inputState.focused,
@@ -398,12 +397,15 @@ export const Input = defineComponent({
     const textareaStyle = computeTextAreaStyle(
       inputState.textarea,
       textState.textValue,
-      toRef(props, 'autosize'),
       typeRef,
+      toRef(props, 'autosize'),
       toRef(props, 'resize')
     );
 
     positionIcon(ctx, typeRef);
+
+
+    console.log(ctx.attrs);
 
     return {
       // form
@@ -418,7 +420,6 @@ export const Input = defineComponent({
       //
       ...textState,
       ...inputState,
-      ...compoState,
       ...clearState,
       ...pwdState,
 
@@ -520,7 +521,7 @@ export const Input = defineComponent({
                 {...$attrs}
               />
             ),
-            // {/* <!-- 前置内容 --> */}
+            // 前置内容
             renderCondition(
               $slots.prefix || prefixIcon,
               <span class="el-input__prefix">
@@ -528,7 +529,7 @@ export const Input = defineComponent({
                 <i class={["el-input__icon", prefixIcon]} />
               </span>,
             ),
-            // {/* <!-- 后置内容 --> */}
+            // 后置内容
             renderCondition(
               getSuffixVisible(),
               <span class="el-input__suffix">
@@ -573,7 +574,7 @@ export const Input = defineComponent({
               </span>
             ),
 
-            // {/* <!-- 后置元素 --> */}
+            // <!-- 后置元素 -->
             renderCondition(
               this.$slots.append,
               <div class="el-input-group__append">

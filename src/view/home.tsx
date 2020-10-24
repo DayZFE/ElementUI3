@@ -293,8 +293,9 @@ export default defineComponent({
         </p>
 
         <p>
-          <ElInput v-model={input.value} placeholder="请输入内容" onInput={(e: Event) => input.value = (e.target! as any).value.replace(/\s*/g,'')}/>
-          <ElInput v-model={input.value} placeholder="请输入内容2" />
+          <ElInput v-model={input.value} placeholder="不能输入空格" onInput={(e: Event) => input.value = (e.target! as any).value.replace(/\s*/g,'')}/>
+          <ElInput v-model={input.value} placeholder="请输入内容2" clearable/>
+          <ElInput v-model={input.value} placeholder="请输入内容2" type="textarea" autosize/>
         </p>
 
         <div style='height:200px;overflow-y:auto'>

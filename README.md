@@ -24,8 +24,7 @@
 - [ ] image
 - [ ] icon
 - [ ] infinite-scroll
-- [ ] input-number
-- [ ] input
+- [x] input
 - [ ] input-number
 - [ ] link
 - [ ] loading

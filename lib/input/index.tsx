@@ -608,4 +608,4 @@ export const Input = defineComponent({
       </div>
     );
   }
-});
+}) as any;

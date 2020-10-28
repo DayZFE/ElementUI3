@@ -1,5 +1,6 @@
 import { inject, onBeforeMount, onMounted, Ref, ref } from "vue";
 import { platformToken } from "../global";
+import { noop } from '../types';
 
 /**
  * scroll anchor direction
@@ -45,7 +46,7 @@ export interface ScrollToOptions {
 
 export default class {
   nodeRef = ref<HTMLElement | null>(null);
-  scrollCb: (e: Event) => void = () => {};
+  scrollCb: (e: Event) => void = noop;
   private body = inject(platformToken)!.BODY;
   private scrollAxisType?: ScrollAxisType;
   private handleScroll = (e: Event) => {

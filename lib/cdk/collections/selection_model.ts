@@ -119,7 +119,9 @@ export class SelectionModel<T> {
     }
   }
 
-  private unmarkSelected(value: T, multiple: boolean = this.multiple, emitChanges: boolean = this.emitChanges) {
+  private unmarkSelected(value: T, 
+    emitChanges: boolean = this.emitChanges
+  ) {
     if (!this.isSelected(value)) {
       return;
     }

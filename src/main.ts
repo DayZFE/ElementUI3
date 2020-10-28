@@ -1,9 +1,8 @@
 import { createApp } from "vue";
 import App from "./App";
-import elementPlugin from "../lib";
-import "../lib/theme-chalk/lib/index.css";
+import "../lib/theme-chalk/src/index.scss";
 import router from "./router";
 
 const app = createApp(App);
-app.use(router).use(elementPlugin, document);
+app.use(router);
 app.mount("#app");

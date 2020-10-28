@@ -10,7 +10,7 @@
   border-radius: $--border-radius-small;
   box-shadow: $--dialog-box-shadow;
   box-sizing: border-box;
-  width: 50%;
+  // width: 50%;
 
   @include when(fullscreen) {
     width: 100%;
@@ -92,11 +92,11 @@
   }
 }
 
-.dialog-fade-enter-active {
+.el-dialog-fade-enter-active {
   animation: dialog-fade-in .3s;
 }
 
-.dialog-fade-leave-active {
+.el-dialog-fade-leave-active {
   animation: dialog-fade-out .3s;
 }
 

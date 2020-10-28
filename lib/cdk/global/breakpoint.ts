@@ -40,7 +40,7 @@ export default class {
   constructor() {
     if (!inject(platformToken)!.BROWSER) return;
     const { TOP } = inject(platformToken)!;
-    for (let key in breakPoints) {
+    for (const key in breakPoints) {
       this.queryMedia(TOP, (breakPoints as any)[key], (e) => {
         if (e) {
           switch (key) {
